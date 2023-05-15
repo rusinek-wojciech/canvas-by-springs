@@ -33,7 +33,6 @@ export function loadApp() {
       balls[i].calculate(dt, cube, balls.slice(i + 1))
       balls[i].draw(dt)
     }
-    // for (let i = 0; i < springs.length; i++) {}
 
     renderer.render(scene, camera)
   })

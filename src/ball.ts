@@ -9,12 +9,12 @@ import {
 } from './config'
 import { Drawable } from './types'
 
+const FORCE = new THREE.Vector3(...WIND).add(new THREE.Vector3(...GRAVITY))
+const D_BALL_RADIUS = 2 * BALL_RADIUS
+
 export class Ball implements Drawable {
   private mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>
 
-  readonly FORCE = new THREE.Vector3(...WIND).add(new THREE.Vector3(...GRAVITY))
-  readonly mass = BALL_MASS
-  readonly radius = BALL_RADIUS
   readonly velocity = new THREE.Vector3()
   readonly force = new THREE.Vector3()
 
@@ -33,7 +33,7 @@ export class Ball implements Drawable {
     box: THREE.Mesh<THREE.BoxGeometry, THREE.Material>,
     balls: Ball[]
   ) {
-    this.force.add(this.FORCE)
+    this.force.add(FORCE)
     this.collisionBox(dt, box)
     balls.forEach((ball) => this.collisionBall(ball, dt))
   }
@@ -62,8 +62,9 @@ export class Ball implements Drawable {
    * V = (F / m) * dt + _V
    */
   velocityStep(dt: number) {
-    const tmp = dt / this.mass
-    return vec(this.force).multiplyScalar(tmp).add(this.velocity)
+    return vec(this.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(this.velocity)
   }
 
   private collisionBox(
@@ -73,9 +74,9 @@ export class Ball implements Drawable {
     const { height, width, depth } = box.geometry.parameters
 
     // position (0, 0, 0)
-    const X = 0.5 * width + this.radius
-    const Y = 0.5 * height + this.radius
-    const Z = 0.5 * depth + this.radius
+    const X = 0.5 * width + BALL_RADIUS
+    const Y = 0.5 * height + BALL_RADIUS
+    const Z = 0.5 * depth + BALL_RADIUS
 
     const vel = this.velocityStep(dt)
     const { x, y, z } = vel.multiplyScalar(dt).add(this.position)
@@ -106,19 +107,15 @@ export class Ball implements Drawable {
     const displacement = vec(relativeVel).multiplyScalar(dt)
     const distance = vec(relativePos).add(displacement).length()
 
-    if (distance < this.radius + ball.radius) {
-      const m = this.mass + ball.mass
-      const m1 = (2 * ball.mass) / m
-      const m2 = (2 * this.mass) / m
-
+    if (distance < D_BALL_RADIUS) {
       const direction = relativePos.normalize()
       const dot = relativeVel.dot(direction)
 
-      this.velocity.sub(vec(direction).multiplyScalar(m1 * dot))
+      this.velocity.sub(vec(direction).multiplyScalar(BALL_MASS * dot))
       this.velocity.multiplyScalar(ENERGY_LOSS_INDICATOR)
       this.isCollision = true
 
-      ball.velocity.add(vec(direction).multiplyScalar(m2 * dot))
+      ball.velocity.add(vec(direction).multiplyScalar(BALL_MASS * dot))
       ball.velocity.multiplyScalar(ENERGY_LOSS_INDICATOR)
       ball.isCollision = true
     }

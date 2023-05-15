@@ -7,25 +7,20 @@ import {
   HALF_ROW_LENGTH,
   ROW_LENGTH,
 } from './config'
-import { createSquareSprings } from './spring'
+import { createSprings } from './create-springs'
 
 export function createScene() {
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(0x87ceeb)
-
   const ambientLight = new THREE.AmbientLight(0xffffff, 1.0)
   scene.add(ambientLight)
-
-  const cube = createCube()
-  scene.add(cube)
   const balls = createBalls(scene)
-  const springs = createSquareSprings(scene, balls)
 
   return {
     scene,
     balls: balls.flatMap((b) => b),
-    springs: springs,
-    cube: cube,
+    springs: createSprings.square(scene, balls),
+    cube: createCube(scene),
   }
 }
 
@@ -59,10 +54,10 @@ function createBalls(scene: THREE.Scene) {
   return balls
 }
 
-function createCube() {
+function createCube(scene: THREE.Scene) {
   const solidMaterial = new THREE.MeshStandardMaterial({ color: 'teal' })
   const geometry = new THREE.BoxGeometry(10, 10, 10)
-  geometry.computeVertexNormals()
   const mesh = new THREE.Mesh(geometry, solidMaterial)
+  scene.add(mesh)
   return mesh
 }
