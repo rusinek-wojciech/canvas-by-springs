@@ -1,16 +1,18 @@
 import * as THREE from 'three'
 import { createCamera } from './camera'
 import { createScene } from './scene'
+import { PERFORMANCE } from './config'
 
 function createRenderer() {
-  const renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.shadowMap.enabled = true
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap
-  renderer.setPixelRatio(window.devicePixelRatio)
+  const renderer = new THREE.WebGLRenderer({
+    antialias: false,
+    powerPreference: 'high-performance',
+    alpha: true,
+    precision: 'lowp',
+  })
+  renderer.setPixelRatio(window.devicePixelRatio * PERFORMANCE)
   renderer.setSize(window.innerWidth, window.innerHeight)
-
   document.body.appendChild(renderer.domElement)
-
   return renderer
 }
 
@@ -25,17 +27,13 @@ export function loadApp() {
 
     for (let i = 0; i < springs.length; i++) {
       springs[i].calculate(dt)
+      springs[i].draw()
     }
     for (let i = 0; i < balls.length; i++) {
       balls[i].calculate(dt, cube, balls.slice(i + 1))
-    }
-
-    for (let i = 0; i < balls.length; i++) {
       balls[i].draw(dt)
     }
-    for (let i = 0; i < springs.length; i++) {
-      springs[i].draw()
-    }
+    // for (let i = 0; i < springs.length; i++) {}
 
     renderer.render(scene, camera)
   })

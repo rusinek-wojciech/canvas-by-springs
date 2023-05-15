@@ -8,11 +8,7 @@ import {
   WIND,
 } from './config'
 import { Drawable } from './types'
-import { position, velocity } from './physics'
 
-// 1. forces
-// 2. velocity
-// 3. position
 export class Ball implements Drawable {
   private mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>
 
@@ -44,15 +40,30 @@ export class Ball implements Drawable {
 
   draw(dt: number) {
     if (!this.isCollision) {
-      const vel = velocity(dt, this.force, this.mass, this.velocity)
+      const vel = this.velocityStep(dt)
       this.velocity.copy(vel)
 
-      const pos = position(dt, vel, this.position)
+      const pos = this.positionStep(dt, vel)
       this.position.copy(pos)
     }
 
     this.force.set(0, 0, 0)
     this.isCollision = false
+  }
+
+  /**
+   * X = v * dt + _X
+   */
+  positionStep(dt: number, velocity: THREE.Vector3) {
+    return vec(velocity).multiplyScalar(dt).add(this.position)
+  }
+
+  /**
+   * V = (F / m) * dt + _V
+   */
+  velocityStep(dt: number) {
+    const tmp = dt / this.mass
+    return vec(this.force).multiplyScalar(tmp).add(this.velocity)
   }
 
   private collisionBox(
@@ -66,8 +77,8 @@ export class Ball implements Drawable {
     const Y = 0.5 * height + this.radius
     const Z = 0.5 * depth + this.radius
 
-    const vel = velocity(dt, this.force, this.mass, this.velocity)
-    const { x, y, z } = position(dt, vel, this.position)
+    const vel = this.velocityStep(dt)
+    const { x, y, z } = vel.multiplyScalar(dt).add(this.position)
 
     if (X > x && -X < x && Y > y && -Y < y && Z > z && -Z < z) {
       if (X > x || -X < x) {
@@ -88,8 +99,8 @@ export class Ball implements Drawable {
   private collisionBall(ball: Ball, dt: number) {
     const relativePos = vec(this.position).sub(ball.position)
 
-    const vel1 = velocity(dt, this.force, this.mass, this.velocity)
-    const vel2 = velocity(dt, ball.force, ball.mass, ball.velocity)
+    const vel1 = this.velocityStep(dt)
+    const vel2 = ball.velocityStep(dt)
     const relativeVel = vel1.sub(vel2)
 
     const displacement = vec(relativeVel).multiplyScalar(dt)
