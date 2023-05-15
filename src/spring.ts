@@ -1,13 +1,16 @@
 import * as THREE from 'three'
 import { Ball } from './ball'
-import { SPRING_B, SPRING_K, SPRING_L } from './config'
-import { vec } from './utils'
+import { BALL_MASS, SPRING_B, SPRING_K, SPRING_L } from './config'
 
 export interface Spring {
   mesh: THREE.Line<THREE.BufferGeometry, THREE.Material>
   ball1: Ball
   ball2: Ball
 }
+
+const tmp = new THREE.Vector3()
+const tmp2 = new THREE.Vector3()
+const tmp3 = new THREE.Vector3()
 
 export class Spring {
   constructor(ball1: Ball, ball2: Ball) {
@@ -23,27 +26,29 @@ export class Spring {
    *  F1 = -F2 = -k * (||X1 - X2|| - L) * ((X1 - X2) / (||X1 - X2||)) - b * (V1 - V2)
    */
   calculate(dt: number) {
-    const distanceVec = vec(this.ball1.position).sub(this.ball2.position)
+    const distanceVec = tmp.copy(this.ball1.position).sub(this.ball2.position)
     const distance = distanceVec.length()
 
     const factor = (-SPRING_K * (distance - SPRING_L)) / distance
 
-    const F1 = distanceVec
-      .multiplyScalar(factor)
-      .sub(
-        this.ball1
-          .velocityStep(dt)
-          .sub(this.ball2.velocityStep(dt))
-          .multiplyScalar(SPRING_B)
-      )
-    const F2 = vec(distanceVec).negate()
+    const v2 = tmp3
+      .copy(this.ball2.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(this.ball2.velocity)
+
+    const v1 = tmp2
+      .copy(this.ball1.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(this.ball1.velocity)
+
+    const bForce = v1.sub(v2).multiplyScalar(SPRING_B)
+    const F1 = distanceVec.multiplyScalar(factor).sub(bForce)
 
     this.ball1.force.add(F1)
-    this.ball2.force.add(F2)
+    this.ball2.force.add(F1.negate())
   }
 
   draw() {
     this.mesh.geometry.setFromPoints([this.ball1.position, this.ball2.position])
-    this.mesh.geometry.computeBoundingSphere()
   }
 }

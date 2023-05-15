@@ -2,12 +2,14 @@ import * as THREE from 'three'
 import { Ball } from './ball'
 import {
   ALTITUDE,
+  BALLS_PER_ROW,
   BALL_RADIUS,
   DISTANCE_BETWEEN_BALLS,
-  HALF_ROW_LENGTH,
-  ROW_LENGTH,
 } from './config'
 import { createSprings } from './create-springs'
+
+const ROW_LENGTH = DISTANCE_BETWEEN_BALLS * (BALLS_PER_ROW - 1)
+const HALF_ROW_LENGTH = ROW_LENGTH * 0.5
 
 export function createScene() {
   const scene = new THREE.Scene()

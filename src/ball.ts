@@ -1,31 +1,31 @@
 import * as THREE from 'three'
-import { vec } from './utils'
 import {
+  BALL_ENERGY_LOSS,
   BALL_MASS,
   BALL_RADIUS,
-  ENERGY_LOSS_INDICATOR,
   GRAVITY,
   WIND,
 } from './config'
-import { Drawable } from './types'
 
 const FORCE = new THREE.Vector3(...WIND).add(new THREE.Vector3(...GRAVITY))
 const D_BALL_RADIUS = 2 * BALL_RADIUS
+const ENERGY_LOSS_INDICATOR = 1 - BALL_ENERGY_LOSS
 
-export class Ball implements Drawable {
-  private mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>
+const tmp = new THREE.Vector3()
+const tmp2 = new THREE.Vector3()
+const tmp3 = new THREE.Vector3()
 
+export class Ball {
+  readonly position
   readonly velocity = new THREE.Vector3()
+  readonly nextVelocity = new THREE.Vector3() // TODO
   readonly force = new THREE.Vector3()
 
+  isCalculatedVelocity = false // TODO
   isCollision = false
 
-  get position() {
-    return this.mesh.position
-  }
-
   constructor(mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>) {
-    this.mesh = mesh
+    this.position = mesh.position
   }
 
   calculate(
@@ -33,38 +33,29 @@ export class Ball implements Drawable {
     box: THREE.Mesh<THREE.BoxGeometry, THREE.Material>,
     balls: Ball[]
   ) {
-    this.force.add(FORCE)
     this.collisionBox(dt, box)
-    balls.forEach((ball) => this.collisionBall(ball, dt))
+    for (let i = 0; i < balls.length; i++) {
+      this.collisionBall(balls[i], dt)
+    }
   }
 
   draw(dt: number) {
     if (!this.isCollision) {
-      const vel = this.velocityStep(dt)
-      this.velocity.copy(vel)
+      /**
+       * V = (F / m) * dt + _V
+       */
+      this.velocity.add(this.force.multiplyScalar(dt / BALL_MASS))
 
-      const pos = this.positionStep(dt, vel)
-      this.position.copy(pos)
+      tmp.copy(this.velocity)
+
+      /**
+       * X = v * dt + _X
+       */
+      this.position.add(tmp.multiplyScalar(dt))
     }
 
-    this.force.set(0, 0, 0)
+    this.force.copy(FORCE)
     this.isCollision = false
-  }
-
-  /**
-   * X = v * dt + _X
-   */
-  positionStep(dt: number, velocity: THREE.Vector3) {
-    return vec(velocity).multiplyScalar(dt).add(this.position)
-  }
-
-  /**
-   * V = (F / m) * dt + _V
-   */
-  velocityStep(dt: number) {
-    return vec(this.force)
-      .multiplyScalar(dt / BALL_MASS)
-      .add(this.velocity)
   }
 
   private collisionBox(
@@ -78,8 +69,12 @@ export class Ball implements Drawable {
     const Y = 0.5 * height + BALL_RADIUS
     const Z = 0.5 * depth + BALL_RADIUS
 
-    const vel = this.velocityStep(dt)
-    const { x, y, z } = vel.multiplyScalar(dt).add(this.position)
+    const { x, y, z } = tmp
+      .copy(this.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(this.velocity)
+      .multiplyScalar(dt)
+      .add(this.position)
 
     if (X > x && -X < x && Y > y && -Y < y && Z > z && -Z < z) {
       if (X > x || -X < x) {
@@ -98,24 +93,32 @@ export class Ball implements Drawable {
   }
 
   private collisionBall(ball: Ball, dt: number) {
-    const relativePos = vec(this.position).sub(ball.position)
+    const relativePos = tmp3.copy(this.position).sub(ball.position)
 
-    const vel1 = this.velocityStep(dt)
-    const vel2 = ball.velocityStep(dt)
-    const relativeVel = vel1.sub(vel2)
+    const vel2 = tmp2
+      .copy(ball.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(ball.velocity)
 
-    const displacement = vec(relativeVel).multiplyScalar(dt)
-    const distance = vec(relativePos).add(displacement).length()
+    const relativeVel = tmp
+      .copy(this.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(this.velocity)
+      .sub(vel2)
+
+    const displacement = tmp2.copy(relativeVel).multiplyScalar(dt)
+    const distance = displacement.add(relativePos).length()
 
     if (distance < D_BALL_RADIUS) {
       const direction = relativePos.normalize()
       const dot = relativeVel.dot(direction)
+      const vel = tmp3.copy(direction).multiplyScalar(BALL_MASS * dot)
 
-      this.velocity.sub(vec(direction).multiplyScalar(BALL_MASS * dot))
+      this.velocity.sub(vel)
       this.velocity.multiplyScalar(ENERGY_LOSS_INDICATOR)
       this.isCollision = true
 
-      ball.velocity.add(vec(direction).multiplyScalar(BALL_MASS * dot))
+      ball.velocity.add(vel)
       ball.velocity.multiplyScalar(ENERGY_LOSS_INDICATOR)
       ball.isCollision = true
     }
