@@ -1,7 +1,13 @@
 import * as THREE from 'three'
-import { SceneBall } from './SceneBall'
-import { BALL_MASS, BALL_RADIUS } from './config'
-import { from } from './utils'
+import { Ball } from './ball'
+import {
+  ALTITUDE,
+  BALL_RADIUS,
+  DISTANCE_BETWEEN_BALLS,
+  HALF_ROW_LENGTH,
+  ROW_LENGTH,
+} from './config'
+import { createSquareSprings } from './spring'
 
 export function createScene() {
   const scene = new THREE.Scene()
@@ -28,25 +34,47 @@ export function createScene() {
 
   const cube = createCube()
   scene.add(cube)
+  const balls = createBalls(scene)
+  const springs = createSquareSprings(scene, balls)
 
-  const balls: SceneBall[] = []
-  const step = 20 / 19
-  for (let z = -10; z <= 10; z += step) {
-    for (let x = -10; x < 10; x += step) {
-      const geometry = new THREE.SphereGeometry(BALL_RADIUS)
-      const material = new THREE.MeshStandardMaterial({
-        color: `hsl(220, ${Math.random() * 100}%, ${Math.random() * 100}%)`,
-      })
-      const mesh = new THREE.Mesh(geometry, material)
+  return {
+    scene,
+    balls: balls.flatMap((b) => b),
+    springs: springs,
+    cube: cube,
+  }
+}
+
+function colorByIterators(z: number, x: number) {
+  const r = 200
+  const g = Math.floor(z * (150 / ROW_LENGTH))
+  const b = Math.floor(x * (150 / ROW_LENGTH))
+  return `rgb(${r}, ${g}, ${b})`
+}
+
+function createBalls(scene: THREE.Scene) {
+  const balls: Ball[][] = []
+
+  for (let i = 0; i <= ROW_LENGTH; i += DISTANCE_BETWEEN_BALLS) {
+    const row: Ball[] = []
+
+    for (let j = 0; j <= ROW_LENGTH; j += DISTANCE_BETWEEN_BALLS) {
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(BALL_RADIUS, 12, 6),
+        new THREE.MeshStandardMaterial({
+          color: colorByIterators(i, j),
+        })
+      )
+      mesh.position.set(j - HALF_ROW_LENGTH, ALTITUDE, i - HALF_ROW_LENGTH)
       mesh.castShadow = true
       mesh.receiveShadow = true
-      mesh.position.copy(new THREE.Vector3(x, 20, z))
       scene.add(mesh)
-      const ball = new SceneBall(mesh, from(), from(), BALL_MASS)
-      balls.push(ball)
+
+      row.push(new Ball(mesh))
     }
+    balls.push(row)
   }
-  return { scene, balls }
+  return balls
 }
 
 function createCube() {
@@ -57,20 +85,4 @@ function createCube() {
   mesh.castShadow = true
   mesh.receiveShadow = true
   return mesh
-}
-
-function createSpring(scene: THREE.Scene, ball1: SceneBall, ball2: SceneBall) {
-  const spring = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([]),
-    new THREE.LineBasicMaterial({ color: 0x000000 })
-  )
-  scene.add(spring)
-  return {
-    draw() {
-      spring.geometry.setFromPoints([
-        from(ball1.position),
-        from(ball2.position),
-      ])
-    },
-  }
 }

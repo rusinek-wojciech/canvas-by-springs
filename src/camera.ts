@@ -1,6 +1,11 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { FOV, NEAR, FAR, CAMERA_POSITION, ORBIT_TARGET } from './config'
+
+const FOV = 60
+const NEAR = 1.0
+const FAR = 1000.0
+const CAMERA_POSITION = [0, 30, 0] as const
+const ORBIT_TARGET = [0, 5, 0] as const
 
 const aspect = () => window.innerWidth / window.innerHeight
 
