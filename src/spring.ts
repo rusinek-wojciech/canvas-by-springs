@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { Ball } from './ball'
-import { BALLS_PER_ROW, SPRING_K, SPRING_L } from './config'
+import { BALLS_PER_ROW, SPRING_B, SPRING_K, SPRING_L } from './config'
 import { springForce } from './physics'
 
 interface Spring {
   mesh: THREE.Line<THREE.BufferGeometry, THREE.Material>
-  calculate: () => void
+  calculate: (dt: number) => void
   draw: () => void
 }
 
@@ -53,8 +53,15 @@ function createSpring(ball1: Ball, ball2: Ball): Spring {
   )
   return {
     mesh,
-    calculate() {
-      const [F1, F2] = springForce(ball1, ball2, SPRING_K, SPRING_L)
+    calculate(dt: number) {
+      const [F1, F2] = springForce(
+        dt,
+        ball1,
+        ball2,
+        SPRING_K,
+        SPRING_L,
+        SPRING_B
+      )
       ball1.force.add(F1)
       ball2.force.add(F2)
     },

@@ -24,7 +24,7 @@ export function loadApp() {
     const dt = clock.getDelta()
 
     for (let i = 0; i < springs.length; i++) {
-      springs[i].calculate()
+      springs[i].calculate(dt)
     }
     for (let i = 0; i < balls.length; i++) {
       balls[i].calculate(dt, cube, balls.slice(i + 1))

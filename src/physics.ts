@@ -2,13 +2,27 @@ import { Ball } from './ball'
 import { vec } from './utils'
 
 /**
- *  F1 = -F2 = -k * (||X1 - X2|| - L) * ((X1 - X2) / (||X1 - X2||))
+ *  F1 = -F2 = -k * (||X1 - X2|| - L) * ((X1 - X2) / (||X1 - X2||)) - b * (V1 - V2)
  */
-export function springForce(ball1: Ball, ball2: Ball, k: number, L: number) {
+export function springForce(
+  dt: number,
+  ball1: Ball,
+  ball2: Ball,
+  k: number,
+  L: number,
+  b: number
+) {
   const distanceVec = vec(ball1.position).sub(ball2.position)
+  const velocityVec = velocity(dt, ball1.force, ball1.mass, ball1.velocity).sub(
+    velocity(dt, ball2.force, ball2.mass, ball2.velocity)
+  )
+
   const distance = distanceVec.length()
 
-  const F1 = distanceVec.normalize().multiplyScalar(-k * (distance - L))
+  const F1 = distanceVec
+    .normalize()
+    .multiplyScalar(-k * (distance - L))
+    .sub(velocityVec.multiplyScalar(b))
   const F2 = vec(distanceVec).negate()
 
   return [F1, F2] as const
