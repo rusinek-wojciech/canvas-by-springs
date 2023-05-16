@@ -8,6 +8,7 @@ export interface Spring {
   ball2: Ball
 }
 
+// for performance
 const tmp = new THREE.Vector3()
 const tmp2 = new THREE.Vector3()
 const tmp3 = new THREE.Vector3()
@@ -15,11 +16,18 @@ const tmp3 = new THREE.Vector3()
 export class Spring {
   constructor(ball1: Ball, ball2: Ball) {
     this.mesh = new THREE.Line(
-      new THREE.BufferGeometry(),
+      new THREE.BufferGeometry().setFromPoints([
+        ball1.position,
+        ball2.position,
+      ]),
       new THREE.LineBasicMaterial({ color: 0x000000 })
     )
     this.ball1 = ball1
     this.ball2 = ball2
+  }
+
+  get geometry() {
+    return this.mesh.geometry
   }
 
   /**
@@ -49,6 +57,16 @@ export class Spring {
   }
 
   draw() {
-    this.mesh.geometry.setFromPoints([this.ball1.position, this.ball2.position])
+    // for petter perfomance - updated reference
+    const positions = this.geometry.getAttribute('position').array as number[]
+
+    positions[0] = this.ball1.position.x
+    positions[1] = this.ball1.position.y
+    positions[2] = this.ball1.position.z
+    positions[3] = this.ball2.position.x
+    positions[4] = this.ball2.position.y
+    positions[5] = this.ball2.position.z
+
+    this.geometry.attributes.position.needsUpdate = true
   }
 }

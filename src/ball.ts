@@ -11,6 +11,7 @@ const FORCE = new THREE.Vector3(...WIND).add(new THREE.Vector3(...GRAVITY))
 const D_BALL_RADIUS = 2 * BALL_RADIUS
 const ENERGY_LOSS_INDICATOR = 1 - BALL_ENERGY_LOSS
 
+// for performance reasons
 const tmp = new THREE.Vector3()
 const tmp2 = new THREE.Vector3()
 const tmp3 = new THREE.Vector3()
@@ -18,10 +19,8 @@ const tmp3 = new THREE.Vector3()
 export class Ball {
   readonly position
   readonly velocity = new THREE.Vector3()
-  readonly nextVelocity = new THREE.Vector3() // TODO
   readonly force = new THREE.Vector3()
 
-  isCalculatedVelocity = false // TODO
   isCollision = false
 
   constructor(mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>) {
@@ -40,19 +39,20 @@ export class Ball {
   }
 
   draw(dt: number) {
-    if (!this.isCollision) {
-      /**
-       * V = (F / m) * dt + _V
-       */
-      this.velocity.add(this.force.multiplyScalar(dt / BALL_MASS))
-
-      tmp.copy(this.velocity)
-
-      /**
-       * X = v * dt + _X
-       */
-      this.position.add(tmp.multiplyScalar(dt))
+    if (this.isCollision) {
+      this.force.set(0, 0, 0)
     }
+
+    /**
+     * V = (F / m) * dt + _V
+     */
+    this.velocity.add(this.force.multiplyScalar(dt / BALL_MASS))
+    tmp.copy(this.velocity)
+
+    /**
+     * X = v * dt + _X
+     */
+    this.position.add(tmp.multiplyScalar(dt))
 
     this.force.copy(FORCE)
     this.isCollision = false
@@ -64,7 +64,7 @@ export class Ball {
   ) {
     const { height, width, depth } = box.geometry.parameters
 
-    // position (0, 0, 0)
+    // position of box (0, 0, 0)
     const X = 0.5 * width + BALL_RADIUS
     const Y = 0.5 * height + BALL_RADIUS
     const Z = 0.5 * depth + BALL_RADIUS
