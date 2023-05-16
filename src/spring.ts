@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { Ball } from './ball'
 import { BALL_MASS, SPRING_B, SPRING_K, SPRING_L } from './config'
+import { Drawable } from './types'
 
 export interface Spring {
   mesh: THREE.Line<THREE.BufferGeometry, THREE.Material>
@@ -13,7 +14,7 @@ const tmp = new THREE.Vector3()
 const tmp2 = new THREE.Vector3()
 const tmp3 = new THREE.Vector3()
 
-export class Spring {
+export class Spring implements Drawable {
   constructor(ball1: Ball, ball2: Ball) {
     this.mesh = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([
@@ -56,7 +57,7 @@ export class Spring {
     this.ball2.force.add(F1.negate())
   }
 
-  draw() {
+  draw(_dt: number) {
     // for petter perfomance - updated reference
     const positions = this.geometry.getAttribute('position').array as number[]
 
@@ -68,5 +69,6 @@ export class Spring {
     positions[5] = this.ball2.position.z
 
     this.geometry.attributes.position.needsUpdate = true
+    this.geometry.computeBoundingSphere()
   }
 }

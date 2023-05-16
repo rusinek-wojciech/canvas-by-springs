@@ -27,7 +27,7 @@ export function loadApp() {
 
     for (let i = 0; i < springs.length; i++) {
       springs[i].calculate(dt)
-      springs[i].draw()
+      springs[i].draw(dt)
     }
     for (let i = 0; i < balls.length; i++) {
       balls[i].calculate(dt, cube, balls.slice(i + 1))

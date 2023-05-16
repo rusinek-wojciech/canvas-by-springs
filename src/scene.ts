@@ -60,6 +60,7 @@ function createCube(scene: THREE.Scene) {
   const solidMaterial = new THREE.MeshStandardMaterial({ color: 'teal' })
   const geometry = new THREE.BoxGeometry(10, 10, 10)
   const mesh = new THREE.Mesh(geometry, solidMaterial)
+
   scene.add(mesh)
   return mesh
 }
