@@ -22,14 +22,31 @@ export class Ball implements Drawable {
   readonly velocity = new THREE.Vector3()
   readonly force = new THREE.Vector3()
 
-  // cache
-  // readonly _velocity = new THREE.Vector3()
-  // readonly _position = new THREE.Vector3()
-
+  // optimization
+  readonly velocityCache = new THREE.Vector3()
+  readonly positionCache = new THREE.Vector3()
+  isCache = false
   isCollision = false
 
   constructor(mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>) {
     this.position = mesh.position
+  }
+
+  /**
+   * V = (F / m) * dt + _V
+   */
+  calculateVelocity(vec: THREE.Vector3, dt: number) {
+    return vec
+      .copy(this.force)
+      .multiplyScalar(dt / BALL_MASS)
+      .add(this.velocity)
+  }
+
+  /**
+   * X = v * dt + _X
+   */
+  calculatePosition(velocity: THREE.Vector3, dt: number) {
+    return velocity.multiplyScalar(dt).add(this.position)
   }
 
   calculate(
@@ -37,9 +54,15 @@ export class Ball implements Drawable {
     box: THREE.Mesh<THREE.BoxGeometry, THREE.Material>,
     balls: Ball[]
   ) {
-    this.collisionBox(dt, box)
+    this.velocityCache.copy(this.calculateVelocity(tmp, dt))
+    this.positionCache.copy(this.calculatePosition(tmp, dt))
+    this.isCache = true
+
+    this.collisionBox(box)
     for (let i = 0; i < balls.length; i++) {
-      this.collisionBall(balls[i], dt)
+      if (!this.isCollision) {
+        this.collisionBall(balls[i], dt)
+      }
     }
   }
 
@@ -48,30 +71,26 @@ export class Ball implements Drawable {
       this.force.set(0, 0, 0)
     }
 
-    /**
-     * V = (F / m) * dt + _V
-     */
-    this.velocity.add(this.force.multiplyScalar(dt / BALL_MASS))
-    tmp.copy(this.velocity)
-
-    /**
-     * X = v * dt + _X
-     */
-    this.position.add(tmp.multiplyScalar(dt))
+    if (this.isCache) {
+      this.velocity.copy(tmp.copy(this.velocityCache))
+      this.position.copy(this.positionCache)
+    } else {
+      this.velocity.copy(this.calculateVelocity(tmp, dt))
+      this.position.copy(this.calculatePosition(tmp, dt))
+    }
 
     this.force.copy(FORCE)
     this.isCollision = false
+    this.isCache = false
   }
 
   private lossByCollision() {
     this.velocity.multiplyScalar(ENERGY_LOSS_INDICATOR)
     this.isCollision = true
+    this.isCache = false
   }
 
-  private collisionBox(
-    dt: number,
-    box: THREE.Mesh<THREE.BoxGeometry, THREE.Material>
-  ) {
+  private collisionBox(box: THREE.Mesh<THREE.BoxGeometry, THREE.Material>) {
     const { height, width, depth } = box.geometry.parameters
 
     // position of box (0, 0, 0)
@@ -79,12 +98,7 @@ export class Ball implements Drawable {
     const Y = 0.5 * height + BALL_RADIUS
     const Z = 0.5 * depth + BALL_RADIUS
 
-    const vel = tmp
-      .copy(this.force)
-      .multiplyScalar(dt / BALL_MASS)
-      .add(this.velocity)
-
-    const pos = vel.multiplyScalar(dt).add(this.position)
+    const pos = this.positionCache
 
     if (
       X > pos.x &&
@@ -105,24 +119,14 @@ export class Ball implements Drawable {
       }
 
       this.lossByCollision()
-      return
     }
-
-    // this._velocity.copy(vel)
-    // this._position.copy(pos)
   }
 
   private collisionBall(ball: Ball, dt: number) {
-    const vel2 = tmp2
-      .copy(ball.force)
-      .multiplyScalar(dt / BALL_MASS)
-      .add(ball.velocity)
+    const vel2 = ball.calculateVelocity(tmp2, dt)
+    const vel1 = tmp.copy(this.velocityCache)
 
-    const relativeVel = tmp
-      .copy(this.force)
-      .multiplyScalar(dt / BALL_MASS)
-      .add(this.velocity)
-      .sub(vel2)
+    const relativeVel = vel1.sub(vel2)
 
     const displacement = tmp2.copy(relativeVel).multiplyScalar(dt)
     const relativePos = tmp3.copy(this.position).sub(ball.position)

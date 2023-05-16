@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { Ball } from './ball'
-import { BALL_MASS, SPRING_B, SPRING_K, SPRING_L } from './config'
+import { SPRING_B, SPRING_K, SPRING_L } from './config'
 import { Drawable } from './types'
 
 export interface Spring {
@@ -40,17 +40,10 @@ export class Spring implements Drawable {
 
     const factor = (-SPRING_K * (distance - SPRING_L)) / distance
 
-    const v2 = tmp3
-      .copy(this.ball2.force)
-      .multiplyScalar(dt / BALL_MASS)
-      .add(this.ball2.velocity)
-
-    const v1 = tmp2
-      .copy(this.ball1.force)
-      .multiplyScalar(dt / BALL_MASS)
-      .add(this.ball1.velocity)
-
-    const bForce = v1.sub(v2).multiplyScalar(SPRING_B)
+    const bForce = this.ball1
+      .calculateVelocity(tmp2, dt)
+      .sub(this.ball2.calculateVelocity(tmp3, dt))
+      .multiplyScalar(SPRING_B)
     const F1 = distanceVec.multiplyScalar(factor).sub(bForce)
 
     this.ball1.force.add(F1)
