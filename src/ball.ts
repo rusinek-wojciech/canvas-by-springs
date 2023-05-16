@@ -72,7 +72,7 @@ export class Ball implements Drawable {
     }
 
     if (this.isCache) {
-      this.velocity.copy(tmp.copy(this.velocityCache))
+      this.velocity.copy(this.velocityCache)
       this.position.copy(this.positionCache)
     } else {
       this.velocity.copy(this.calculateVelocity(tmp, dt))
