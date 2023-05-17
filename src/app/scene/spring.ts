@@ -1,7 +1,11 @@
 import * as THREE from 'three'
 import { Ball } from './ball'
-import { SPRING_B, SPRING_K, SPRING_L } from './config'
-import { Drawable } from './types'
+import { Drawable } from '../types'
+import { config } from '../config'
+import { springForce } from './physics'
+
+// changeable dynamically
+const SPRING_CONFIG = config.canvas.spring
 
 export interface Spring {
   mesh: THREE.Line<THREE.BufferGeometry, THREE.Material>
@@ -31,21 +35,16 @@ export class Spring implements Drawable {
     return this.mesh.geometry
   }
 
-  /**
-   *  F1 = -F2 = -k * (||X1 - X2|| - L) * ((X1 - X2) / (||X1 - X2||)) - b * (V1 - V2)
-   */
   calculate(dt: number) {
-    const distanceVec = tmp.copy(this.ball1.position).sub(this.ball2.position)
-    const distance = distanceVec.length()
-
-    const factor = (-SPRING_K * (distance - SPRING_L)) / distance
-
-    const bForce = this.ball1
-      .calculateVelocity(tmp2, dt)
-      .sub(this.ball2.calculateVelocity(tmp3, dt))
-      .multiplyScalar(SPRING_B)
-    const F1 = distanceVec.multiplyScalar(factor).sub(bForce)
-
+    const F1 = springForce(
+      SPRING_CONFIG.K,
+      SPRING_CONFIG.L,
+      SPRING_CONFIG.B,
+      tmp.copy(this.ball1.position),
+      this.ball2.position,
+      this.ball1.calculateVelocity(tmp2, dt),
+      this.ball2.calculateVelocity(tmp3, dt)
+    )
     this.ball1.force.add(F1)
     this.ball2.force.add(F1.negate())
   }
