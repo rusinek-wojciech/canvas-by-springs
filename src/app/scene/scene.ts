@@ -15,9 +15,11 @@ export function createScene() {
   return {
     scene,
     balls: balls.flatMap((b) => b),
-    springs: createSpringMesh[
-      CANVAS_CONFIG.mesh as keyof typeof createSpringMesh
-    ](scene, balls, CANVAS_CONFIG.perRow),
+    springs: createSpringMesh[CANVAS_CONFIG.mesh](
+      scene,
+      balls,
+      CANVAS_CONFIG.perRow
+    ),
     cube: createCube(scene),
   }
 }
@@ -55,7 +57,7 @@ function createCube(scene: THREE.Scene) {
   const solidMaterial = new THREE.MeshStandardMaterial({ color: 'teal' })
   const geometry = new THREE.BoxGeometry(10, 10, 10)
   const mesh = new THREE.Mesh(geometry, solidMaterial)
-
+  mesh.position.copy(config.environment.figure.position)
   scene.add(mesh)
   return mesh
 }

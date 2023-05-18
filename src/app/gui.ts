@@ -19,9 +19,13 @@ export function createGui(options: { onRestartClick: () => void }) {
   windFolder.add(config.environment.wind, 'y', -10, 10, 0.1).name('Y')
   windFolder.add(config.environment.wind, 'z', -10, 10, 0.1).name('Z')
 
-  envFolder
-    .add(config.environment, 'obstacle', ['ball', 'cube', 'cone'])
-    .name('Obstacle')
+  const figFolder = envFolder.addFolder('Figure')
+  figFolder.add(config.environment.figure.position, 'x', -20, 20, 0.1).name('X')
+  figFolder.add(config.environment.figure.position, 'y', -20, 20, 0.1).name('Y')
+  figFolder.add(config.environment.figure.position, 'z', -20, 20, 0.1).name('Z')
+  figFolder
+    .add(config.environment.figure, 'type', ['ball', 'cube', 'cone'])
+    .name('Type')
 
   const canvasFolder = gui.addFolder('Canvas')
   canvasFolder.add(config.canvas, 'perRow', 0, 100, 1).name('Balls per row')

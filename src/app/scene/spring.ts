@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { Ball } from './ball'
 import { Drawable } from '../types'
 import { config } from '../config'
-import { springForce } from './physics'
+import { springForce } from '../physics/formulas'
 
 // changeable dynamically
 const SPRING_CONFIG = config.canvas.spring
@@ -14,9 +14,8 @@ export interface Spring {
 }
 
 // for performance
-const tmp = new THREE.Vector3()
-const tmp2 = new THREE.Vector3()
-const tmp3 = new THREE.Vector3()
+const tmp_1 = new THREE.Vector3()
+const tmp_2 = new THREE.Vector3()
 
 export class Spring implements Drawable {
   constructor(ball1: Ball, ball2: Ball) {
@@ -35,18 +34,20 @@ export class Spring implements Drawable {
     return this.mesh.geometry
   }
 
-  calculate(dt: number) {
-    const F1 = springForce(
+  calculate(_dt: number) {
+    springForce(
+      tmp_1,
+      tmp_2,
       SPRING_CONFIG.K,
       SPRING_CONFIG.L,
       SPRING_CONFIG.B,
-      tmp.copy(this.ball1.position),
+      this.ball1.position,
       this.ball2.position,
-      this.ball1.calculateVelocity(tmp2, dt),
-      this.ball2.calculateVelocity(tmp3, dt)
+      this.ball1.velocity,
+      this.ball2.velocity
     )
-    this.ball1.force.add(F1)
-    this.ball2.force.add(F1.negate())
+    this.ball1.force.add(tmp_1)
+    this.ball2.force.add(tmp_2)
   }
 
   draw(_dt: number) {

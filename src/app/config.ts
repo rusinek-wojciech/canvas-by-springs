@@ -7,13 +7,16 @@ export const config = {
   environment: {
     gravity: new THREE.Vector3(0, -2, 0),
     wind: new THREE.Vector3(0.3, 0, 0.2),
-    obstacle: 'cube',
+    figure: {
+      position: new THREE.Vector3(0, 0, 0),
+      type: 'cube' as 'ball' | 'cube' | 'cone',
+    },
   },
   canvas: {
     perRow: 20,
     distanceBetween: 1.0,
     altitude: 12.5,
-    mesh: 'square',
+    mesh: 'square' as 'square' | 'diagonal' | 'merged',
     ball: {
       mass: 1.0,
       radius: 0.15,
