@@ -9,7 +9,7 @@ export const config = {
     wind: new THREE.Vector3(0.3, 0, 0.2),
     figure: {
       position: new THREE.Vector3(0, 0, 0),
-      type: 'cube' as 'ball' | 'cube' | 'cone',
+      type: 'cube' as 'sphere' | 'cube' | 'cone',
     },
   },
   canvas: {

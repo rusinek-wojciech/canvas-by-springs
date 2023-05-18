@@ -1,10 +1,71 @@
 import * as THREE from 'three'
 import { Ball } from '../scene/ball'
-import { Cube } from '../scene/scene'
+import { Cone, Cube, Sphere } from '../scene/figures'
 
 const tmp_1 = new THREE.Vector3()
 const tmp_2 = new THREE.Vector3()
 const tmp_3 = new THREE.Vector3()
+
+/**
+ * @returns true if collision
+ */
+export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
+  const X = tmp_1
+
+  X.copy(ball.X).sub(cone.X)
+  const length = X.length()
+
+  if (length <= cone.r + ball.r) {
+    ball.V.multiplyScalar(energyRetain)
+    return true
+  }
+
+  return false
+}
+
+/**
+ * X = X1 - X2
+ *
+ * collision condition:
+ * ||X|| <= r1 + r2
+ *
+ * V1' = V1 - (2 * m2) / (m1 + m2) * dot(V1, X) * X / (||X|| * ||X||)
+ *
+ * lim m-> inf (2 * m2) / (m1 + m2) = 2
+ * V1' = V1 - 2 * dot(V1, X) * X / (||X|| * ||X||)
+ *
+ * @returns true if collision
+ */
+export function ballCollideSphere(
+  ball: Ball,
+  sphere: Sphere,
+  energyRetain: number
+) {
+  const X = tmp_1
+
+  X.copy(ball.X).sub(sphere.X)
+  const length = X.length()
+
+  if (length <= sphere.r + ball.r) {
+    const length2 = length * length
+
+    const vProjection = ball.V.dot(X) / length2
+
+    ball.V.sub(tmp_2.copy(X).multiplyScalar(2 * vProjection))
+    ball.V.multiplyScalar(energyRetain)
+
+    // reaction force
+    const fProjection = ball.F.dot(X) / length2
+    ball.F.sub(tmp_2.copy(X).multiplyScalar(fProjection))
+
+    // workaround for sticky issues
+    ball.X.copy(X.normalize().multiplyScalar(sphere.r + ball.r))
+
+    return true
+  }
+
+  return false
+}
 
 /**
  * @returns true if collision
@@ -77,6 +138,8 @@ export function ballCollideCube(ball: Ball, cube: Cube, energyRetain: number) {
  * V1' = V1 - M1 * dot(V, X) * X / (||X|| * ||X||)
  * V2' = V2 + M2 * dot(V, X) * X / (||X|| * ||X||)
  *
+ * faster version and less accurate
+ *
  * @returns true if collision
  */
 export function ballCollideBall(
@@ -91,15 +154,15 @@ export function ballCollideBall(
   X.copy(ball1.X).sub(ball2.X)
   const length = X.length()
 
-  if (length < ball1.r + ball2.r) {
+  if (length <= ball1.r + ball2.r) {
     const m = ball1.m + ball2.m
     const m1 = (2 * ball2.m) / m
     const m2 = (2 * ball1.m) / m
 
-    const dotNormalized = V.dot(X) / (length * length)
+    const vProjection = (V.dot(X) / length) * length
 
-    ball1.V.sub(tmp_3.copy(X).multiplyScalar(m1 * dotNormalized))
-    ball2.V.add(X.multiplyScalar(m2 * dotNormalized))
+    ball1.V.sub(tmp_3.copy(X).multiplyScalar(m1 * vProjection))
+    ball2.V.add(X.multiplyScalar(m2 * vProjection))
 
     ball1.V.multiplyScalar(energyRetain)
     ball2.V.multiplyScalar(energyRetain)

@@ -24,7 +24,7 @@ export function createGui(options: { onRestartClick: () => void }) {
   figFolder.add(config.environment.figure.position, 'y', -20, 20, 0.1).name('Y')
   figFolder.add(config.environment.figure.position, 'z', -20, 20, 0.1).name('Z')
   figFolder
-    .add(config.environment.figure, 'type', ['ball', 'cube', 'cone'])
+    .add(config.environment.figure, 'type', ['sphere', 'cube', 'cone'])
     .name('Type')
 
   const canvasFolder = gui.addFolder('Canvas')

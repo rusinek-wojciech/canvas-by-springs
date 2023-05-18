@@ -2,8 +2,7 @@ import * as THREE from 'three'
 import { Ball } from './ball'
 import { createSpringMesh } from './spring-mesh'
 import { config } from '../config'
-
-const CANVAS_CONFIG = config.canvas
+import { createFigure } from './figures'
 
 export function createScene() {
   const scene = new THREE.Scene()
@@ -12,52 +11,52 @@ export function createScene() {
   scene.add(ambientLight)
   const balls = createBalls(scene)
 
+  const figure = new createFigure[config.environment.figure.type](
+    config.environment.figure.position
+  )
+  scene.add(figure.mesh)
+
+  const springs = createSpringMesh[config.canvas.mesh](
+    scene,
+    balls,
+    config.canvas.perRow
+  )
+
   return {
     scene,
     balls: balls.flatMap((b) => b),
-    springs: createSpringMesh[CANVAS_CONFIG.mesh](
-      scene,
-      balls,
-      CANVAS_CONFIG.perRow
-    ),
-    cube: createCube(scene),
+    springs,
+    figure,
   }
 }
 
 function createBalls(scene: THREE.Scene) {
-  const length = CANVAS_CONFIG.distanceBetween * (CANVAS_CONFIG.perRow - 1)
+  const length = config.canvas.distanceBetween * (config.canvas.perRow - 1)
 
   const balls: Ball[][] = []
 
-  for (let i = 0; i <= length; i += CANVAS_CONFIG.distanceBetween) {
+  for (let i = 0; i <= length; i += config.canvas.distanceBetween) {
     const row: Ball[] = []
 
-    for (let j = 0; j <= length; j += CANVAS_CONFIG.distanceBetween) {
+    for (let j = 0; j <= length; j += config.canvas.distanceBetween) {
       const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(CANVAS_CONFIG.ball.radius, 8, 4),
+        new THREE.SphereGeometry(config.canvas.ball.radius, 8, 4),
         new THREE.MeshStandardMaterial({
           color: colorByIterators(i, j, length),
         })
       )
       mesh.position.set(
         j - 0.5 * length,
-        CANVAS_CONFIG.altitude,
+        config.canvas.altitude,
         i - 0.5 * length
       )
       scene.add(mesh)
 
-      row.push(new Ball(mesh, CANVAS_CONFIG.ball.mass))
+      row.push(new Ball(mesh, config.canvas.ball.mass))
     }
     balls.push(row)
   }
   return balls
-}
-
-function createCube(scene: THREE.Scene) {
-  const cube = new Cube()
-  scene.add(cube.mesh)
-
-  return cube
 }
 
 function colorByIterators(z: number, x: number, length: number) {
@@ -65,22 +64,4 @@ function colorByIterators(z: number, x: number, length: number) {
   const g = Math.floor(z * (150 / length))
   const b = Math.floor(x * (150 / length))
   return `rgb(${r}, ${g}, ${b})`
-}
-
-export class Cube {
-  readonly X
-  readonly D
-  readonly mesh
-
-  constructor() {
-    const solidMaterial = new THREE.MeshStandardMaterial({ color: 'teal' })
-    const geometry = new THREE.BoxGeometry(10, 10, 10)
-    this.mesh = new THREE.Mesh(geometry, solidMaterial)
-
-    geometry.computeVertexNormals()
-    this.mesh.position.copy(config.environment.figure.position)
-    const { height, width, depth } = geometry.parameters
-    this.D = new THREE.Vector3(width, height, depth)
-    this.X = this.mesh.position
-  }
 }
