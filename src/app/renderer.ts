@@ -47,10 +47,12 @@ export function loadApp() {
 
       for (let i = 0; i < balls.length; i++) {
         ballCollideCube(balls[i], cube, config.canvas.ball.energyRetain)
+      }
 
-        // for (let j = i + 1; j < balls.length; j++) {
-        //   ballCollideBall(balls[i], balls[j], dt)
-        // }
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          ballCollideBall(balls[i], balls[j], config.canvas.ball.energyRetain)
+        }
       }
 
       for (let i = 0; i < springs.length; i++) {

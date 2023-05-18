@@ -66,31 +66,43 @@ export function ballCollideCube(ball: Ball, cube: Cube, energyRetain: number) {
 }
 
 /**
+ * X = X1 - X2
+ * V = V1 - V2
+ * M1 = (2 * m2) / (m1 + m2)
+ * M2 = (2 * m1) / (m1 + m2)
  *
- * ||X2 - X1|| <= r1 + r2
+ * collision condition:
+ * ||X|| <= r1 + r2
  *
- * V1 = m2 / (m1 + m2) * (V2 - V1)
- * V2 = m1 / (m1 + m2) * (V1 - V2)
+ * V1' = V1 - M1 * dot(V, X) * X / (||X|| * ||X||)
+ * V2' = V2 + M2 * dot(V, X) * X / (||X|| * ||X||)
  *
  * @returns true if collision
  */
-export function ballCollideBall(ball1: Ball, ball2: Ball, dt: number) {
-  const V = tmp_1.copy(ball1.V).sub(ball2.V)
-  const V_ = tmp_2.copy(V).multiplyScalar(dt)
+export function ballCollideBall(
+  ball1: Ball,
+  ball2: Ball,
+  energyRetain: number
+) {
+  const V = tmp_1
+  const X = tmp_2
 
-  const X = tmp_3.copy(ball1.X).sub(ball2.X)
-  const distance = V_.add(X).length()
+  V.copy(ball1.V).sub(ball2.V)
+  X.copy(ball1.X).sub(ball2.X)
+  const length = X.length()
 
-  if (distance < ball1.r + ball2.r) {
+  if (length < ball1.r + ball2.r) {
     const m = ball1.m + ball2.m
     const m1 = (2 * ball2.m) / m
     const m2 = (2 * ball1.m) / m
 
-    const direction = X.normalize()
-    const dot = V.dot(direction)
+    const dotNormalized = V.dot(X) / (length * length)
 
-    ball1.V.sub(tmp_1.copy(direction).multiplyScalar(m1 * dot))
-    ball2.V.add(direction.multiplyScalar(m2 * dot))
+    ball1.V.sub(tmp_3.copy(X).multiplyScalar(m1 * dotNormalized))
+    ball2.V.add(X.multiplyScalar(m2 * dotNormalized))
+
+    ball1.V.multiplyScalar(energyRetain)
+    ball2.V.multiplyScalar(energyRetain)
 
     return true
   }
