@@ -54,12 +54,10 @@ function createBalls(scene: THREE.Scene) {
 }
 
 function createCube(scene: THREE.Scene) {
-  const solidMaterial = new THREE.MeshStandardMaterial({ color: 'teal' })
-  const geometry = new THREE.BoxGeometry(10, 10, 10)
-  const mesh = new THREE.Mesh(geometry, solidMaterial)
-  mesh.position.copy(config.environment.figure.position)
-  scene.add(mesh)
-  return mesh
+  const cube = new Cube()
+  scene.add(cube.mesh)
+
+  return cube
 }
 
 function colorByIterators(z: number, x: number, length: number) {
@@ -67,4 +65,22 @@ function colorByIterators(z: number, x: number, length: number) {
   const g = Math.floor(z * (150 / length))
   const b = Math.floor(x * (150 / length))
   return `rgb(${r}, ${g}, ${b})`
+}
+
+export class Cube {
+  readonly X
+  readonly D
+  readonly mesh
+
+  constructor() {
+    const solidMaterial = new THREE.MeshStandardMaterial({ color: 'teal' })
+    const geometry = new THREE.BoxGeometry(10, 10, 10)
+    this.mesh = new THREE.Mesh(geometry, solidMaterial)
+
+    geometry.computeVertexNormals()
+    this.mesh.position.copy(config.environment.figure.position)
+    const { height, width, depth } = geometry.parameters
+    this.D = new THREE.Vector3(width, height, depth)
+    this.X = this.mesh.position
+  }
 }

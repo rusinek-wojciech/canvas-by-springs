@@ -43,8 +43,8 @@ export function createGui(options: { onRestartClick: () => void }) {
   ballFolder.add(config.canvas.ball, 'radius', 0.01, 5, 0.01).name('Radius')
   ballFolder.add(config.canvas.ball, 'mass', 0.1, 10, 0.1).name('Mass')
   ballFolder
-    .add(config.canvas.ball, 'energyLoss', 0, 1, 0.01)
-    .name('Energy loss in %')
+    .add(config.canvas.ball, 'energyRetain', 0, 1, 0.01)
+    .name('Energy retain in %')
 
   const springFolder = canvasFolder.addFolder('Springs')
   springFolder.add(config.canvas.spring, 'L', 0, 50, 0.01).name('L')

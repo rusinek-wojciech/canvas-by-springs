@@ -20,7 +20,7 @@ export const config = {
     ball: {
       mass: 1.0,
       radius: 0.15,
-      energyLoss: 0.5,
+      energyRetain: 0.5,
     },
     spring: {
       L: 1.0,
