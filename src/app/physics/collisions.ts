@@ -57,8 +57,12 @@ export function ballCollideSphere(
     const fProjection = ball.F.dot(X) / length2
     ball.F.sub(tmp_2.copy(X).multiplyScalar(fProjection))
 
-    // workaround for sticky issues
-    ball.X.copy(X.normalize().multiplyScalar(sphere.r + ball.r))
+    // workaround for sticky issues (TODO: fix when sphere position is different)
+    ball.X.copy(
+      X.normalize()
+        .multiplyScalar(sphere.r + ball.r)
+        .add(sphere.X)
+    )
 
     return true
   }
@@ -160,11 +164,8 @@ export function ballCollideBall(
 
     const vProjection = (V.dot(X) / length) * length
 
-    ball1.V.sub(tmp_3.copy(X).multiplyScalar(m1 * vProjection))
-    ball2.V.add(X.multiplyScalar(m2 * vProjection))
-
-    ball1.V.multiplyScalar(energyRetain)
-    ball2.V.multiplyScalar(energyRetain)
+    ball1.V.sub(tmp_3.copy(X).multiplyScalar(m1 * vProjection * energyRetain))
+    ball2.V.add(X.multiplyScalar(m2 * vProjection * energyRetain))
 
     return true
   }

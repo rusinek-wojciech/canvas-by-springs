@@ -32,12 +32,10 @@ export function createScene() {
 
   const balls = createBalls(scene)
 
-  const figure = new createFigure[config.environment.figure.type](
-    config.environment.figure.position
-  )
+  const figure = new createFigure[config.figure.type](config.figure.position)
   scene.add(figure.mesh)
 
-  const springs = createSpringMesh[config.canvas.mesh](
+  const springs = createSpringMesh[config.canvas.type](
     scene,
     balls,
     config.canvas.perRow
@@ -61,10 +59,8 @@ function createBalls(scene: THREE.Scene) {
 
     for (let j = 0; j <= length; j += config.canvas.distanceBetween) {
       const ball = new Ball(
-        new THREE.Vector3(
-          j - 0.5 * length,
-          config.canvas.altitude,
-          i - 0.5 * length
+        new THREE.Vector3(j - 0.5 * length, 0, i - 0.5 * length).add(
+          config.canvas.position
         ),
         colorByIterators(i, j, length),
         config.canvas.ball.mass

@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { createCamera } from './camera'
 import { createScene } from './scene/scene'
 import { config } from './config'
-import { createGui } from './gui'
+import { createGui } from './gui/gui'
 
 function createRenderer() {
   const renderer = new THREE.WebGLRenderer({
@@ -43,17 +43,14 @@ export function loadApp() {
       for (let i = 0; i < springs.length; i++) {
         springs[i].updateState()
       }
-
       for (let i = 0; i < balls.length; i++) {
         figure.collide(balls[i], config.canvas.ball.energyRetain)
       }
-
-      // for (let i = 0; i < balls.length; i++) {
-      //   for (let j = i + 1; j < balls.length; j++) {
-      //     balls[i].collide(balls[j], config.canvas.ball.energyRetain)
-      //   }
-      // }
-
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          balls[i].collide(balls[j], config.canvas.ball.energyRetain)
+        }
+      }
       for (let i = 0; i < springs.length; i++) {
         springs[i].draw()
       }
