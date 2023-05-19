@@ -5,14 +5,22 @@ import { Figure } from './figure.abstract.class'
 import { config } from '../../config'
 
 export class Cube extends Figure<THREE.BoxGeometry> {
-  readonly D: THREE.Vector3
-
   constructor(position: THREE.Vector3) {
     const { width, height, depth } = config.figure
-
     const geometry = new THREE.BoxGeometry(width, height, depth)
     super(geometry, position)
-    this.D = new THREE.Vector3(width, height, depth)
+  }
+
+  get h() {
+    return this.geometry.parameters.height
+  }
+
+  get w() {
+    return this.geometry.parameters.width
+  }
+
+  get d() {
+    return this.geometry.parameters.depth
   }
 
   collide(ball: Ball, energyRetain: number) {

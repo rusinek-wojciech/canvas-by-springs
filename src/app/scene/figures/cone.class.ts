@@ -17,6 +17,10 @@ export class Cone extends Figure<THREE.ConeGeometry> {
     return this.geometry.parameters.radius
   }
 
+  get h() {
+    return this.geometry.parameters.height
+  }
+
   collide(ball: Ball, energyRetain: number) {
     return ballCollideCone(ball, this, energyRetain)
   }

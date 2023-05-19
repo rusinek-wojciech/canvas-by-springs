@@ -7,6 +7,7 @@ export const config = {
   environment: {
     gravity: new THREE.Vector3(0, -2, 0),
     wind: new THREE.Vector3(0.3, 0, 0.2),
+    energyRetain: 0.5,
   },
   figure: {
     type: 'cube' as 'sphere' | 'cube' | 'cone',
@@ -24,7 +25,6 @@ export const config = {
     ball: {
       mass: 1.0,
       radius: 0.15,
-      energyRetain: 0.5,
     },
     spring: {
       L: 1.0,

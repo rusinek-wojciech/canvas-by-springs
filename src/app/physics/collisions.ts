@@ -4,22 +4,47 @@ import { Cone, Ball, Sphere, Cube } from '../scene/figures'
 const tmp_1 = new THREE.Vector3()
 const tmp_2 = new THREE.Vector3()
 const tmp_3 = new THREE.Vector3()
+const tmp_4 = new THREE.Vector3()
 
 /**
  * @returns true if collision
  */
 export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
   const X = tmp_1
+  const T = tmp_2
 
-  X.copy(ball.X).sub(cone.X)
-  const length = X.length()
+  X.copy(ball.X)
+    .sub(cone.X)
+    .add(T.set(0, 0.5 * cone.h, 0))
 
-  if (length <= cone.r + ball.r) {
-    ball.V.multiplyScalar(energyRetain)
-    return true
+  if (X.y > cone.h || X.y < 0) {
+    return false
   }
 
-  return false
+  const distanceY = tmp_2.set(X.x, 0, X.z).length()
+  const radius = cone.r * (1.0 - X.y / cone.h)
+
+  if (distanceY > radius + ball.r) {
+    return false
+  }
+
+  tmp_4.set(0, X.y, 0).cross(tmp_2).normalize()
+  tmp_2.set(X.x, X.y - cone.h, X.z).normalize()
+
+  const N = tmp_2.cross(tmp_4)
+
+  const vProjection = ball.V.dot(N)
+  ball.V.sub(tmp_4.copy(N).multiplyScalar(2 * vProjection * energyRetain))
+
+  // reaction force
+  const fProjection = ball.F.dot(N)
+  ball.F.sub(tmp_4.copy(N).multiplyScalar(fProjection))
+
+  ball.F.dot(N)
+
+  // TODO: setting X
+
+  return true
 }
 
 /**
@@ -50,14 +75,12 @@ export function ballCollideSphere(
 
     const vProjection = ball.V.dot(X) / length2
 
-    ball.V.sub(tmp_2.copy(X).multiplyScalar(2 * vProjection))
-    ball.V.multiplyScalar(energyRetain)
+    ball.V.sub(tmp_2.copy(X).multiplyScalar(2 * vProjection * energyRetain))
 
     // reaction force
     const fProjection = ball.F.dot(X) / length2
     ball.F.sub(tmp_2.copy(X).multiplyScalar(fProjection))
 
-    // workaround for sticky issues (TODO: fix when sphere position is different)
     ball.X.copy(
       X.normalize()
         .multiplyScalar(sphere.r + ball.r)
@@ -80,7 +103,7 @@ export function ballCollideCube(ball: Ball, cube: Cube, energyRetain: number) {
 
   X.copy(ball.X).sub(cube.X)
   _X.copy(ball._X).sub(cube.X)
-  D.copy(cube.D).multiplyScalar(0.5).addScalar(ball.r)
+  D.set(cube.w, cube.h, cube.d).multiplyScalar(0.5).addScalar(ball.r)
 
   if (
     D.x >= X.x &&
@@ -94,35 +117,36 @@ export function ballCollideCube(ball: Ball, cube: Cube, energyRetain: number) {
 
     if (D.x <= _X.x) {
       ball.F.setX(0)
-      ball.V.reflect(tmp.set(1, 0, 0))
+      ball.V.reflect(tmp.set(energyRetain, 0, 0))
       ball.X.setX(cube.X.x + D.x)
     } else if (-D.x >= _X.x) {
       ball.F.setX(0)
-      ball.V.reflect(tmp.set(1, 0, 0))
+      ball.V.reflect(tmp.set(energyRetain, 0, 0))
       ball.X.setX(cube.X.x - D.x)
     }
 
     if (D.y <= _X.y) {
       ball.F.setY(0)
-      ball.V.reflect(tmp.set(0, 1, 0))
+      ball.V.reflect(tmp.set(0, energyRetain, 0))
       ball.X.setY(cube.X.y + D.y)
     } else if (-D.y >= _X.y) {
       ball.F.setY(0)
-      ball.V.reflect(tmp.set(0, 1, 0))
+      ball.V.reflect(tmp.set(0, energyRetain, 0))
       ball.X.setY(cube.X.y - D.y)
     }
 
     if (D.z <= _X.z) {
       ball.F.setZ(0)
-      ball.V.reflect(tmp.set(0, 0, 1))
+      ball.V.reflect(tmp.set(0, 0, energyRetain))
       ball.X.setZ(cube.X.z + D.z)
     } else if (-D.z >= _X.z) {
       ball.F.setZ(0)
-      ball.V.reflect(tmp.set(0, 0, 1))
+      ball.V.reflect(tmp.set(0, 0, energyRetain))
       ball.X.setZ(cube.X.z - D.z)
     }
 
-    ball.V.multiplyScalar(energyRetain)
+    // TODO: energy loss
+    // ball.V.multiplyScalar(energyRetain)
     return true
   }
 

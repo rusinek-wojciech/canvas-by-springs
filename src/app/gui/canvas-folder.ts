@@ -1,11 +1,6 @@
 import { GUI } from 'dat.gui'
 import { config } from '../config'
-import {
-  percentControl,
-  positionControl,
-  floatControl,
-  intControl,
-} from './controls'
+import { positionControl, floatControl, intControl } from './controls'
 
 export function createCanvasFolder(gui: GUI) {
   const folder = gui.addFolder('Canvas')
@@ -22,10 +17,11 @@ export function createCanvasFolder(gui: GUI) {
   floatControl(ballFolder, ball, 'radius', 'Radius')
   floatControl(ballFolder, ball, 'mass', 'Mass')
   floatControl(ballFolder, ball, 'mass', 'Mass')
-  percentControl(ballFolder, ball, 'energyRetain', 'Energy retain')
+  ballFolder.open()
 
   const springFolder = folder.addFolder('Springs')
   floatControl(springFolder, spring, 'L', 'L')
   floatControl(springFolder, spring, 'K', 'K')
   floatControl(springFolder, spring, 'B', 'B')
+  springFolder.open()
 }

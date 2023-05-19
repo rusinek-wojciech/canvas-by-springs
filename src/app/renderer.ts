@@ -44,11 +44,11 @@ export function loadApp() {
         springs[i].updateState()
       }
       for (let i = 0; i < balls.length; i++) {
-        figure.collide(balls[i], config.canvas.ball.energyRetain)
+        figure.collide(balls[i], config.environment.energyRetain)
       }
       for (let i = 0; i < balls.length; i++) {
         for (let j = i + 1; j < balls.length; j++) {
-          balls[i].collide(balls[j], config.canvas.ball.energyRetain)
+          balls[i].collide(balls[j], config.environment.energyRetain)
         }
       }
       for (let i = 0; i < springs.length; i++) {
