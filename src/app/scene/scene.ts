@@ -12,8 +12,24 @@ const createFigure = {
 export function createScene() {
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(0x87ceeb)
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1.0)
+
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  directionalLight.position.set(0.33, 0.66, 0.1)
+  directionalLight.target.position.set(0, 0, 0)
+  directionalLight.shadow.bias = -0.001
+  directionalLight.shadow.camera.near = 0.1
+  directionalLight.shadow.camera.far = 500.0
+  directionalLight.shadow.camera.near = 0.5
+  directionalLight.shadow.camera.far = 500.0
+  directionalLight.shadow.camera.left = 100
+  directionalLight.shadow.camera.right = -100
+  directionalLight.shadow.camera.top = 100
+  directionalLight.shadow.camera.bottom = -100
+  scene.add(directionalLight)
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
   scene.add(ambientLight)
+
   const balls = createBalls(scene)
 
   const figure = new createFigure[config.environment.figure.type](
@@ -44,20 +60,18 @@ function createBalls(scene: THREE.Scene) {
     const row: Ball[] = []
 
     for (let j = 0; j <= length; j += config.canvas.distanceBetween) {
-      const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(config.canvas.ball.radius, 8, 4),
-        new THREE.MeshStandardMaterial({
-          color: colorByIterators(i, j, length),
-        })
+      const ball = new Ball(
+        new THREE.Vector3(
+          j - 0.5 * length,
+          config.canvas.altitude,
+          i - 0.5 * length
+        ),
+        colorByIterators(i, j, length),
+        config.canvas.ball.mass
       )
-      mesh.position.set(
-        j - 0.5 * length,
-        config.canvas.altitude,
-        i - 0.5 * length
-      )
-      scene.add(mesh)
 
-      row.push(new Ball(mesh, config.canvas.ball.mass))
+      scene.add(ball.mesh)
+      row.push(ball)
     }
     balls.push(row)
   }

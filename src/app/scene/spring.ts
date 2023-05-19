@@ -3,9 +3,6 @@ import { Ball } from './figures'
 import { config } from '../config'
 import { springForce } from '../physics/formulas'
 
-// changeable dynamically
-const SPRING_CONFIG = config.canvas.spring
-
 // for performance
 const tmp_1 = new THREE.Vector3()
 const tmp_2 = new THREE.Vector3()
@@ -31,9 +28,9 @@ export class Spring {
     springForce(
       F1,
       F2,
-      SPRING_CONFIG.K,
-      SPRING_CONFIG.L,
-      SPRING_CONFIG.B,
+      config.canvas.spring.K,
+      config.canvas.spring.L,
+      config.canvas.spring.B,
       this.ball1._X,
       this.ball2._X,
       this.ball1._V,

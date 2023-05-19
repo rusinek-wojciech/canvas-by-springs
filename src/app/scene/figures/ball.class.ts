@@ -2,27 +2,31 @@ import * as THREE from 'three'
 import { config } from '../../config'
 import { position, velocity } from '../../physics/formulas'
 import { ballCollideBall } from '../../physics/collisions'
+import { Figure } from './figure.abstract.class'
 
-export class Ball {
-  readonly r: number
+export class Ball extends Figure<THREE.SphereGeometry> {
   readonly m: number
 
   readonly _X = new THREE.Vector3()
-  readonly X = new THREE.Vector3()
-
   readonly _V = new THREE.Vector3()
   readonly V = new THREE.Vector3()
-
   readonly _F = new THREE.Vector3()
   readonly F = new THREE.Vector3()
 
-  constructor(
-    mesh: THREE.Mesh<THREE.SphereGeometry, THREE.Material>,
-    mass: number
-  ) {
-    this.X = mesh.position
+  constructor(position: THREE.Vector3, color: string, mass: number) {
+    const geometry = new THREE.SphereGeometry(config.canvas.ball.radius, 8, 4)
+    super(
+      geometry,
+      position,
+      new THREE.MeshStandardMaterial({
+        color,
+      })
+    )
     this.m = mass
-    this.r = mesh.geometry.parameters.radius
+  }
+
+  get r() {
+    return this.geometry.parameters.radius
   }
 
   updateState(dt: number) {
