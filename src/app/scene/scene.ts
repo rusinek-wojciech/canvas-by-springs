@@ -1,8 +1,13 @@
 import * as THREE from 'three'
-import { Ball } from './ball'
 import { createSpringMesh } from './spring-mesh'
 import { config } from '../config'
-import { createFigure } from './figures'
+import { Cone, Cube, Sphere, Ball } from './figures'
+
+const createFigure = {
+  cube: Cube,
+  sphere: Sphere,
+  cone: Cone,
+} as const
 
 export function createScene() {
   const scene = new THREE.Scene()

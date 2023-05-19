@@ -1,6 +1,5 @@
 import * as THREE from 'three'
-import { Ball } from '../scene/ball'
-import { Cone, Cube, Sphere } from '../scene/figures'
+import { Cone, Ball, Sphere, Cube } from '../scene/figures'
 
 const tmp_1 = new THREE.Vector3()
 const tmp_2 = new THREE.Vector3()

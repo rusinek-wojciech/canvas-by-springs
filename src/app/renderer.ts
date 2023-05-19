@@ -3,7 +3,6 @@ import { createCamera } from './camera'
 import { createScene } from './scene/scene'
 import { config } from './config'
 import { createGui } from './gui'
-import { ballCollideBall } from './physics/collisions'
 
 function createRenderer() {
   const renderer = new THREE.WebGLRenderer({
@@ -49,11 +48,11 @@ export function loadApp() {
         figure.collide(balls[i], config.canvas.ball.energyRetain)
       }
 
-      for (let i = 0; i < balls.length; i++) {
-        for (let j = i + 1; j < balls.length; j++) {
-          // ballCollideBall(balls[i], balls[j], config.canvas.ball.energyRetain)
-        }
-      }
+      // for (let i = 0; i < balls.length; i++) {
+      //   for (let j = i + 1; j < balls.length; j++) {
+      //     balls[i].collide(balls[j], config.canvas.ball.energyRetain)
+      //   }
+      // }
 
       for (let i = 0; i < springs.length; i++) {
         springs[i].draw()

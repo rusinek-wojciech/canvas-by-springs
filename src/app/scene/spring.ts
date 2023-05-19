@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { Ball } from './ball'
+import { Ball } from './figures'
 import { config } from '../config'
 import { springForce } from '../physics/formulas'
 

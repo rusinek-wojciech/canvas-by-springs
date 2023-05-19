@@ -1,9 +1,7 @@
 import * as THREE from 'three'
-import { config } from '../config'
-import { position, velocity } from '../physics/formulas'
-
-// changeable dynamically
-const ENV_CONFIG = config.environment
+import { config } from '../../config'
+import { position, velocity } from '../../physics/formulas'
+import { ballCollideBall } from '../../physics/collisions'
 
 export class Ball {
   readonly r: number
@@ -29,12 +27,16 @@ export class Ball {
 
   updateState(dt: number) {
     this._F.copy(this.F)
-    this.F.copy(ENV_CONFIG.gravity).add(ENV_CONFIG.wind)
+    this.F.copy(config.environment.gravity).add(config.environment.wind)
 
     this._V.copy(this.V)
     velocity(this.V, this._F, this.m, this._V, dt)
 
     this._X.copy(this.X)
     position(this.X, this.V, this._X, dt)
+  }
+
+  collide(ball: Ball, energyRetain: number) {
+    return ballCollideBall(ball, this, energyRetain)
   }
 }
