@@ -14,7 +14,7 @@ export class Sphere extends Figure<THREE.SphereGeometry> {
     return this.geometry.parameters.radius
   }
 
-  collide(ball: Ball, energyRetain: number) {
-    return ballCollideSphere(ball, this, energyRetain)
+  collide(ball: Ball) {
+    return ballCollideSphere(ball, this, config.environment.energyRetain)
   }
 }

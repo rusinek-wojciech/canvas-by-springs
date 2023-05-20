@@ -17,7 +17,7 @@ export abstract class Figure<T extends THREE.BufferGeometry> {
     this.X.copy(position)
   }
 
-  abstract collide(ball: Ball, energyRetain: number): boolean
+  abstract collide(ball: Ball): boolean
 
   get geometry() {
     return this.mesh.geometry

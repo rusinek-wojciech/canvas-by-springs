@@ -5,12 +5,17 @@ import { Figure } from './figure.abstract.class'
 import { config } from '../../config'
 
 export class Cone extends Figure<THREE.ConeGeometry> {
+  readonly sin: number
+  readonly cos: number
+
   constructor(position: THREE.Vector3) {
-    const geometry = new THREE.ConeGeometry(
-      config.figure.radius,
-      config.figure.height
-    )
+    const { radius, height } = config.figure
+    const geometry = new THREE.ConeGeometry(radius, height)
     super(geometry, position)
+
+    const wall = new THREE.Vector2(radius, height).length()
+    this.sin = radius / wall
+    this.cos = height / wall
   }
 
   get r() {
@@ -21,7 +26,7 @@ export class Cone extends Figure<THREE.ConeGeometry> {
     return this.geometry.parameters.height
   }
 
-  collide(ball: Ball, energyRetain: number) {
-    return ballCollideCone(ball, this, energyRetain)
+  collide(ball: Ball) {
+    return ballCollideCone(ball, this, config.environment.energyRetain)
   }
 }

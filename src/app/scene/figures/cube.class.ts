@@ -23,7 +23,7 @@ export class Cube extends Figure<THREE.BoxGeometry> {
     return this.geometry.parameters.depth
   }
 
-  collide(ball: Ball, energyRetain: number) {
-    return ballCollideCube(ball, this, energyRetain)
+  collide(ball: Ball) {
+    return ballCollideCube(ball, this, config.environment.energyRetain)
   }
 }

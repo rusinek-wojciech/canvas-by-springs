@@ -5,6 +5,8 @@ const tmp_1 = new THREE.Vector3()
 const tmp_2 = new THREE.Vector3()
 const tmp_3 = new THREE.Vector3()
 const tmp_4 = new THREE.Vector3()
+const tmp_5 = new THREE.Vector3()
+const tmp_6 = new THREE.Vector3()
 
 /**
  * @returns true if collision
@@ -14,8 +16,8 @@ export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
   const T = tmp_2
   const Y = tmp_3
   const buff = tmp_4
-  const D = tmp_3
-  const N = tmp_3
+  const D = tmp_5
+  const W = tmp_6
 
   X.copy(ball.X)
     .sub(cone.X)
@@ -27,69 +29,36 @@ export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
 
   Y.set(X.x, 0, X.z)
   const radius = cone.r * (1.0 - X.y / cone.h)
+  const yLength = Y.length()
 
-  if (Y.length() > radius + ball.r) {
+  if (yLength > radius + ball.r) {
     return false
   }
 
-  D.set(X.x, X.y - cone.h, X.z)
-  N.cross(buff.set(0, X.y, 0).cross(D)).normalize()
+  // cone wall vector
+  W.copy(Y.normalize()).multiplyScalar(cone.r)
+  W.sub(buff.set(0, cone.h, 0))
 
-  const vProjection = ball.V.dot(N)
-  ball.V.sub(buff.copy(N).multiplyScalar(2 * vProjection * energyRetain))
+  // perpendicular vector to place of collision parallel to Y
+  D.set(-X.z * X.y, 0, X.x * X.y)
+
+  // normal to wall
+  const N = D.cross(W).normalize()
 
   // reaction force
   const fProjection = ball.F.dot(N)
   ball.F.sub(buff.copy(N).multiplyScalar(fProjection))
 
-  // TODO: position alignment
-
-  return true
-}
-
-/**
- * X = X1 - X2
- *
- * collision condition:
- * ||X|| <= r1 + r2
- *
- * V1' = V1 - (2 * m2) / (m1 + m2) * dot(V1, X) * X / (||X|| * ||X||)
- *
- * lim m-> inf (2 * m2) / (m1 + m2) = 2
- * V1' = V1 - 2 * dot(V1, X) * X / (||X|| * ||X||)
- *
- * @returns true if collision
- */
-export function ballCollideSphere(
-  ball: Ball,
-  sphere: Sphere,
-  energyRetain: number
-) {
-  const X = tmp_1
-  const buff = tmp_2
-
-  X.copy(ball.X).sub(sphere.X)
-  const length = X.length()
-
-  if (length > sphere.r + ball.r) {
-    return false
-  }
-
-  const length2 = length * length
-
-  const vProjection = ball.V.dot(X) / length2
-  ball.V.sub(buff.copy(X).multiplyScalar(2 * vProjection * energyRetain))
-
-  // reaction force
-  const fProjection = ball.F.dot(X) / length2
-  ball.F.sub(buff.copy(X).multiplyScalar(fProjection))
+  // bounce velocity
+  const vProjection = ball.V.dot(N)
+  ball.V.sub(buff.copy(N).multiplyScalar(2 * vProjection * energyRetain))
 
   // align position
-  ball.X.copy(
-    X.normalize()
-      .multiplyScalar(sphere.r + ball.r)
-      .add(sphere.X)
-  )
+  const n = ball.r + cone.cos * (radius - yLength) + yLength / cone.cos
+  const h = n * cone.sin
+  N.multiplyScalar(n)
+  buff.set(0, X.y - h, 0).sub(T)
+  ball.X.copy(buff.add(cone.X).add(N))
 
   return true
 }
@@ -163,8 +132,6 @@ export function ballCollideCube(ball: Ball, cube: Cube, energyRetain: number) {
  * V1' = V1 - M1 * dot(V, X) * X / (||X|| * ||X||)
  * V2' = V2 + M2 * dot(V, X) * X / (||X|| * ||X||)
  *
- * faster version and less accurate
- *
  * @returns true if collision
  */
 export function ballCollideBall(
@@ -178,21 +145,77 @@ export function ballCollideBall(
 
   V.copy(ball1.V).sub(ball2.V)
   X.copy(ball1.X).sub(ball2.X)
-  const length = X.length()
+  const radiuses = ball1.r + ball2.r
 
-  if (length > ball1.r + ball2.r) {
+  if (X.length() > radiuses) {
     return false
   }
 
+  X.normalize()
+
+  // mass
   const m = ball1.m + ball2.m
   const m1 = (2 * ball2.m) / m
   const m2 = (2 * ball1.m) / m
 
-  const vProjection = V.dot(X) / (length * length)
-  ball1.V.sub(buff.copy(X).multiplyScalar(m1 * vProjection * energyRetain))
-  ball2.V.add(X.multiplyScalar(m2 * vProjection * energyRetain))
+  // reaction force
+  const fProjection1 = ball1.F.dot(X)
+  ball1.F.sub(buff.copy(X).multiplyScalar(fProjection1))
 
-  // TODO: reaction force and position alignment ?
+  const fProjection2 = ball2.F.dot(X)
+  ball2.F.sub(buff.copy(X).multiplyScalar(fProjection2))
+
+  // bounce
+  const vProjection = V.dot(X)
+  ball1.V.sub(buff.copy(X).multiplyScalar(m1 * vProjection * energyRetain))
+  ball2.V.add(buff.copy(X).multiplyScalar(m2 * vProjection * energyRetain))
+
+  // align position
+  ball1.X.copy(X.multiplyScalar(radiuses).add(ball1.X))
+  ball2.X.copy(X.multiplyScalar(radiuses).add(ball2.X))
+
+  return true
+}
+
+/**
+ * X = X1 - X2
+ *
+ * collision condition:
+ * ||X|| <= r1 + r2
+ *
+ * V1' = V1 - (2 * m2) / (m1 + m2) * dot(V1, X) * X / (||X|| * ||X||)
+ *
+ * lim m-> inf (2 * m2) / (m1 + m2) = 2
+ * V1' = V1 - 2 * dot(V1, X) * X / (||X|| * ||X||)
+ *
+ * @returns true if collision
+ */
+export function ballCollideSphere(
+  ball: Ball,
+  sphere: Sphere,
+  energyRetain: number
+) {
+  const X = tmp_1
+  const buff = tmp_2
+
+  X.copy(ball.X).sub(sphere.X)
+
+  if (X.length() > sphere.r + ball.r) {
+    return false
+  }
+
+  X.normalize()
+
+  // reaction force
+  const fProjection = ball.F.dot(X)
+  ball.F.sub(buff.copy(X).multiplyScalar(fProjection))
+
+  // bounce velocity
+  const vProjection = ball.V.dot(X)
+  ball.V.sub(buff.copy(X).multiplyScalar(2 * vProjection * energyRetain))
+
+  // align position
+  ball.X.copy(X.multiplyScalar(sphere.r + ball.r).add(sphere.X))
 
   return true
 }

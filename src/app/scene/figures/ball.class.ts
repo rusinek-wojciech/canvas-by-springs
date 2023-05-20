@@ -31,16 +31,15 @@ export class Ball extends Figure<THREE.SphereGeometry> {
 
   updateState(dt: number) {
     this._F.copy(this.F)
-    this.F.copy(config.environment.gravity).add(config.environment.wind)
-
     this._V.copy(this.V)
-    velocity(this.V, this._F, this.m, this._V, dt)
-
     this._X.copy(this.X)
+
+    this.F.copy(config.environment.gravity).add(config.environment.wind)
+    velocity(this.V, this._F, this.m, this._V, dt)
     position(this.X, this.V, this._X, dt)
   }
 
-  collide(ball: Ball, energyRetain: number) {
-    return ballCollideBall(ball, this, energyRetain)
+  collide(ball: Ball) {
+    return ballCollideBall(ball, this, config.environment.energyRetain)
   }
 }
