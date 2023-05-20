@@ -19,6 +19,10 @@ export abstract class Figure<T extends THREE.BufferGeometry> {
 
   abstract collide(ball: Ball): boolean
 
+  get isEnabled() {
+    return this.mesh.visible
+  }
+
   get geometry() {
     return this.mesh.geometry
   }

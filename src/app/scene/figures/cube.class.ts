@@ -24,6 +24,8 @@ export class Cube extends Figure<THREE.BoxGeometry> {
   }
 
   collide(ball: Ball) {
-    return ballCollideCube(ball, this, config.environment.energyRetain)
+    return this.isEnabled
+      ? ballCollideCube(ball, this, config.environment.energyRetain)
+      : false
   }
 }

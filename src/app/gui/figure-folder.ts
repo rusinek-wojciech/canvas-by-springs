@@ -2,18 +2,22 @@ import { GUI } from 'dat.gui'
 import { config } from '../config'
 import { positionControl, floatControl } from './controls'
 
-export function createFigureFolder(gui: GUI) {
-  const figFolder = gui.addFolder('Figure')
+export function createFigureFolder(
+  gui: GUI,
+  onToggleFigure: (v: boolean) => void,
+  onFigurePositionChange: () => void
+) {
+  const folder = gui.addFolder('Figure')
   const { position } = config.figure
 
-  const typeCtrl = figFolder
+  const typeCtrl = folder
     .add(config.figure, 'type', ['sphere', 'cube', 'cone'])
     .name('Type')
 
-  const radiusCtrl = floatControl(figFolder, config.figure, 'radius', 'Radius')
-  const widthCtrl = floatControl(figFolder, config.figure, 'width', 'Width')
-  const heightCtrl = floatControl(figFolder, config.figure, 'height', 'Height')
-  const depthCtrl = floatControl(figFolder, config.figure, 'depth', 'Depth')
+  const radiusCtrl = floatControl(folder, config.figure, 'radius', 'Radius')
+  const widthCtrl = floatControl(folder, config.figure, 'width', 'Width')
+  const heightCtrl = floatControl(folder, config.figure, 'height', 'Height')
+  const depthCtrl = floatControl(folder, config.figure, 'depth', 'Depth')
 
   function handleTypeChange(type: typeof config.figure.type) {
     if (type === 'cone') {
@@ -36,5 +40,11 @@ export function createFigureFolder(gui: GUI) {
 
   typeCtrl.onChange(handleTypeChange)
   handleTypeChange(config.figure.type)
-  positionControl(figFolder, position)
+
+  const [xCtrl, yCtrl, zCtrl] = positionControl(folder, position)
+  xCtrl.onChange(onFigurePositionChange)
+  yCtrl.onChange(onFigurePositionChange)
+  zCtrl.onChange(onFigurePositionChange)
+
+  folder.add({ v: true }, 'v', true).name('Enabled').onChange(onToggleFigure)
 }

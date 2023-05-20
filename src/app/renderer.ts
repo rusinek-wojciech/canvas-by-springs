@@ -22,17 +22,11 @@ export function loadApp() {
   const camera = createCamera(renderer)
   const clock = new THREE.Clock()
 
-  createGui({
-    onRestartClick() {
-      handleRestart()
-      handleStart()
-    },
-  })
-
-  handleStart()
+  let scene: ReturnType<typeof createScene>
 
   function handleStart() {
-    const { scene, balls, springs, figure } = createScene()
+    scene = createScene()
+    const { balls, figure, springs } = scene
 
     renderer.setAnimationLoop(() => {
       const dt = clock.getDelta()
@@ -43,7 +37,6 @@ export function loadApp() {
       for (let i = 0; i < springs.length; i++) {
         springs[i].updateState()
       }
-
       for (let i = 0; i < balls.length; i++) {
         figure.collide(balls[i])
       }
@@ -56,12 +49,23 @@ export function loadApp() {
         springs[i].draw()
       }
 
-      renderer.render(scene, camera)
+      renderer.render(scene.scene, camera)
     })
   }
 
-  function handleRestart() {
-    renderer.setAnimationLoop(null)
-    renderer.setPixelRatio(window.devicePixelRatio * config.app.performance)
-  }
+  createGui({
+    onRestartClick() {
+      renderer.setAnimationLoop(null)
+      renderer.setPixelRatio(window.devicePixelRatio * config.app.performance)
+      handleStart()
+    },
+    onToggleFigure(value) {
+      scene.figure.mesh.visible = value
+    },
+    onFigurePositionChange() {
+      scene.figure.X.copy(config.figure.position)
+    },
+  })
+
+  handleStart()
 }

@@ -15,6 +15,8 @@ export class Sphere extends Figure<THREE.SphereGeometry> {
   }
 
   collide(ball: Ball) {
-    return ballCollideSphere(ball, this, config.environment.energyRetain)
+    return this.isEnabled
+      ? ballCollideSphere(ball, this, config.environment.energyRetain)
+      : false
   }
 }
