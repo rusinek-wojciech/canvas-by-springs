@@ -35,14 +35,9 @@ export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
     return false
   }
 
-  // cone wall vector
-  W.copy(Y.normalize()).multiplyScalar(cone.r)
-  W.sub(buff.set(0, cone.h, 0))
-
-  // perpendicular vector to place of collision parallel to Y
+  // normal to wall in place of collision
+  W.copy(Y.normalize()).multiplyScalar(cone.r).sub(buff.set(0, cone.h, 0))
   D.set(-X.z * X.y, 0, X.x * X.y)
-
-  // normal to wall
   const N = D.cross(W).normalize()
 
   // reaction force
@@ -55,10 +50,13 @@ export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
 
   // align position
   const n = ball.r + cone.cos * (radius - yLength) + yLength / cone.cos
-  const h = n * cone.sin
-  N.multiplyScalar(n)
-  buff.set(0, X.y - h, 0).sub(T)
-  ball.X.copy(buff.add(cone.X).add(N))
+  ball.X.copy(
+    buff
+      .set(0, X.y - n * cone.sin, 0)
+      .sub(T)
+      .add(cone.X)
+      .add(N.multiplyScalar(n))
+  )
 
   return true
 }
