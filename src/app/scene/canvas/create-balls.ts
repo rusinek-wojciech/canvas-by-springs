@@ -2,41 +2,73 @@ import * as THREE from 'three'
 import { config } from '../../config'
 import { Ball } from '../figures'
 
-export function createBalls(scene: THREE.Scene) {
-  const length = config.canvas.distanceBetween * (config.canvas.perRow - 1)
+export function createBalls() {
+  const { angle, perRow, distanceBetween, position, ball } = config.canvas
+  const { yaw, roll } = angle
+
+  const xDistance = distanceBetween
+  const yDistance = distanceBetween * Math.sin(roll)
+  const zDistance = distanceBetween * Math.cos(roll)
+
+  const rot = new THREE.Matrix3()
+  rot.set(
+    Math.cos(yaw),
+    0,
+    Math.sin(yaw),
+    0,
+    1,
+    0,
+    -Math.sin(yaw),
+    0,
+    Math.cos(yaw)
+  )
+
+  const num = perRow - 1
+  const xLength = xDistance * num
+  const yLength = yDistance * num
+  const zLength = zDistance * num
 
   const balls: Ball[][] = []
 
-  let i = config.canvas.perRow
-
+  let dx = 0
+  let dy = 0
   let dz = 0
 
-  while (i > 0) {
+  let i = 0
+  while (i < perRow) {
     const row: Ball[] = []
 
-    let j = config.canvas.perRow
+    dx = 0
 
-    let dx = 0
+    let j = 0
+    while (j < perRow) {
+      const pos = new THREE.Vector3(
+        dx - 0.5 * xLength,
+        dy - 0.5 * yLength,
+        dz - 0.5 * zLength
+      )
+      pos.applyMatrix3(rot)
 
-    while (j > 0) {
-      const ball = new Ball(
-        new THREE.Vector3(dx - 0.5 * length, 0, dz - 0.5 * length).add(
-          config.canvas.position
-        ),
-        colorByIterators(dx, dz, length),
-        config.canvas.ball.mass
+      row.push(
+        new Ball(
+          pos.add(position),
+          colorByIterators(dx, dz, xLength),
+          ball.mass
+        )
       )
 
-      scene.add(ball.mesh)
-      row.push(ball)
-
-      dx += config.canvas.distanceBetween
-      j--
+      dx += xDistance
+      j++
     }
     balls.push(row)
 
-    dz += config.canvas.distanceBetween
-    i--
+    dy += yDistance
+    dz += zDistance
+    i++
+  }
+
+  for (let i = 0; i < perRow; i++) {
+    for (let j = 0; j < perRow; j++) {}
   }
 
   return balls

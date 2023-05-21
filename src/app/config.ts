@@ -22,6 +22,10 @@ export const config = {
   canvas: {
     type: 'square' as 'square' | 'diagonal' | 'merged',
     position: new THREE.Vector3(0, 15, 0),
+    angle: {
+      yaw: 0.0,
+      roll: 0.0,
+    },
     perRow: 20,
     distanceBetween: 0.4,
     ball: {

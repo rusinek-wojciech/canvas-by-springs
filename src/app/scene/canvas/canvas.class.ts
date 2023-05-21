@@ -10,7 +10,7 @@ export class Canvas {
   readonly springs: Spring[]
 
   constructor(scene: THREE.Scene) {
-    const balls = createBalls(scene)
+    const balls = createBalls()
 
     this.springs = createSpringMesh[config.canvas.type](
       scene,
@@ -18,6 +18,7 @@ export class Canvas {
       config.canvas.perRow
     )
     this.balls = balls.flatMap((b) => b)
+    scene.add(...this.balls.map((b) => b.mesh))
   }
 
   updateState(dt: number) {

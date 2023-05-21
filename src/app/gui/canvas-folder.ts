@@ -1,10 +1,15 @@
 import { GUI } from 'dat.gui'
 import { config } from '../config'
-import { positionControl, floatControl, intControl } from './controls'
+import {
+  positionControl,
+  floatControl,
+  intControl,
+  percentControl,
+} from './controls'
 
 export function createCanvasFolder(gui: GUI) {
   const folder = gui.addFolder('Canvas')
-  const { position, spring, ball } = config.canvas
+  const { position, spring, ball, angle } = config.canvas
 
   folder
     .add(config.canvas, 'type', ['square', 'diagonal', 'merged'])
@@ -13,9 +18,11 @@ export function createCanvasFolder(gui: GUI) {
   floatControl(folder, config.canvas, 'distanceBetween', 'Distance between')
   positionControl(folder, position)
 
+  percentControl(folder, angle, 'yaw', 'Yaw')
+  percentControl(folder, angle, 'roll', 'Roll')
+
   const ballFolder = folder.addFolder('Ball')
   floatControl(ballFolder, ball, 'radius', 'Radius')
-  floatControl(ballFolder, ball, 'mass', 'Mass')
   floatControl(ballFolder, ball, 'mass', 'Mass')
   ballFolder.open()
 
