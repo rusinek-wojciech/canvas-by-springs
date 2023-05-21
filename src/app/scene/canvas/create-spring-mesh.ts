@@ -12,11 +12,15 @@ function createSquareMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
 
   for (let i = 0; i < rows; i++) {
     for (let j = 1; j < rows; j++) {
-      const spring1 = new Spring(balls[i][j], balls[i][j - 1])
-      const spring2 = new Spring(balls[j][i], balls[j - 1][i])
+      const ball1 = balls[i][j]
+      const ball2 = balls[i][j - 1]
+      const ball3 = balls[j][i]
+      const ball4 = balls[j - 1][i]
 
-      scene.add(spring1.mesh, spring2.mesh)
-      springs.push(spring1, spring2)
+      springs.push(
+        new Spring(scene, ball1, ball2),
+        new Spring(scene, ball3, ball4)
+      )
     }
   }
   return springs
@@ -27,11 +31,15 @@ function createDiagonalMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
 
   for (let i = 1; i < rows; i++) {
     for (let j = 1; j < rows; j++) {
-      const spring1 = new Spring(balls[i][j], balls[i - 1][j - 1])
-      const spring2 = new Spring(balls[i][j - 1], balls[i - 1][j])
+      const ball1 = balls[i][j]
+      const ball2 = balls[i - 1][j - 1]
+      const ball3 = balls[i][j - 1]
+      const ball4 = balls[i - 1][j]
 
-      scene.add(spring1.mesh, spring2.mesh)
-      springs.push(spring1, spring2)
+      springs.push(
+        new Spring(scene, ball1, ball2),
+        new Spring(scene, ball3, ball4)
+      )
     }
   }
   return springs

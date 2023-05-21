@@ -17,10 +17,11 @@ export const config = {
     width: 6,
     height: 8,
     depth: 6,
-    enabled: true,
+    enabled: true as boolean,
   },
   canvas: {
     type: 'square' as 'square' | 'diagonal' | 'merged',
+    surface: true as boolean,
     position: new THREE.Vector3(0, 15, 0),
     angle: {
       yaw: 0.0,

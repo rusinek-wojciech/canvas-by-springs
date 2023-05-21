@@ -1,13 +1,14 @@
 import * as THREE from 'three'
 import { config } from '../../config'
-import { Ball, Cone, Cube, Sphere } from '../figures'
+import { Cone, Cube, Sphere } from '../figures'
 import { createSpringMesh } from './create-spring-mesh'
-import { Spring } from './spring.class'
 import { createBalls } from './create-balls'
+import { Surface } from './surface.class'
 
 export class Canvas {
-  readonly balls: Ball[]
-  readonly springs: Spring[]
+  readonly balls
+  readonly springs
+  readonly surface
 
   constructor(scene: THREE.Scene) {
     const balls = createBalls()
@@ -17,11 +18,21 @@ export class Canvas {
       balls,
       config.canvas.perRow
     )
+
     this.balls = balls.flatMap((b) => b)
+
+    this.surface = new Surface(scene, balls)
+
     scene.add(...this.balls.map((b) => b.mesh))
+
+    this.toggleSurface(config.canvas.surface)
   }
 
   updateState(dt: number) {
+    this.surface.repaint()
+    for (let i = 0; i < this.springs.length; i++) {
+      this.springs[i].repaint()
+    }
     for (let i = 0; i < this.balls.length; i++) {
       this.balls[i].updateState(dt)
     }
@@ -38,6 +49,18 @@ export class Canvas {
       for (let j = i + 1; j < this.balls.length; j++) {
         this.balls[i].collide(this.balls[j])
       }
+    }
+  }
+
+  toggleSurface(isSurface: boolean) {
+    for (let i = 0; i < this.surface.planes.length; i++) {
+      this.surface.planes[i].mesh.visible = isSurface
+    }
+    for (let i = 0; i < this.springs.length; i++) {
+      this.springs[i].mesh.visible = !isSurface
+    }
+    for (let i = 0; i < this.balls.length; i++) {
+      this.balls[i].mesh.visible = !isSurface
     }
   }
 }

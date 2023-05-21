@@ -89,6 +89,9 @@ export function loadApp() {
     onLightPositionChange() {
       scene.directionalLight.position.copy(config.environment.lightPosition)
     },
+    onToggleSurface() {
+      scene.canvas.toggleSurface(config.canvas.surface)
+    },
   })
 
   handleStart()

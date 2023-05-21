@@ -10,6 +10,7 @@ export function createGui(options: {
   onToggleFigure: () => void
   onFigurePositionChange: () => void
   onLightPositionChange: () => void
+  onToggleSurface: () => void
 }) {
   const gui = new GUI()
 
@@ -23,7 +24,7 @@ export function createGui(options: {
     options.onToggleFigure,
     options.onFigurePositionChange
   )
-  createCanvasFolder(gui)
+  createCanvasFolder(gui, options.onToggleSurface)
 
   gui
     .add(

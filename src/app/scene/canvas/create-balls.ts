@@ -6,7 +6,6 @@ export function createBalls() {
   const { angle, perRow, distanceBetween, position, ball } = config.canvas
   const { yaw, roll } = angle
 
-  const xDistance = distanceBetween
   const yDistance = distanceBetween * Math.sin(roll)
   const zDistance = distanceBetween * Math.cos(roll)
 
@@ -24,7 +23,7 @@ export function createBalls() {
   )
 
   const num = perRow - 1
-  const xLength = xDistance * num
+  const length = distanceBetween * num
   const yLength = yDistance * num
   const zLength = zDistance * num
 
@@ -43,21 +42,17 @@ export function createBalls() {
     let j = 0
     while (j < perRow) {
       const pos = new THREE.Vector3(
-        dx - 0.5 * xLength,
+        dx - 0.5 * length,
         dy - 0.5 * yLength,
         dz - 0.5 * zLength
       )
       pos.applyMatrix3(rot)
 
       row.push(
-        new Ball(
-          pos.add(position),
-          colorByIterators(dx, dz, xLength),
-          ball.mass
-        )
+        new Ball(pos.add(position), colorByIterators(dx, dz, length), ball.mass)
       )
 
-      dx += xDistance
+      dx += distanceBetween
       j++
     }
     balls.push(row)

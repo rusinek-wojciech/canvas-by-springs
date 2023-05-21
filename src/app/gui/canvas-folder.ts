@@ -7,13 +7,14 @@ import {
   percentControl,
 } from './controls'
 
-export function createCanvasFolder(gui: GUI) {
+export function createCanvasFolder(gui: GUI, onToggleSurface: () => void) {
   const folder = gui.addFolder('Canvas')
   const { position, spring, ball, angle } = config.canvas
 
   folder
     .add(config.canvas, 'type', ['square', 'diagonal', 'merged'])
     .name('Type')
+  folder.add(config.canvas, 'surface').name('Surface').onChange(onToggleSurface)
   intControl(folder, config.canvas, 'perRow', 'Balls per row')
   floatControl(folder, config.canvas, 'distanceBetween', 'Distance between')
   positionControl(folder, position)

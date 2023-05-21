@@ -9,21 +9,26 @@ const tmp_2 = new THREE.Vector3()
 
 export class Spring {
   readonly mesh
+
   readonly ball1
   readonly ball2
 
-  constructor(ball1: Ball, ball2: Ball) {
+  private static readonly material = new THREE.LineBasicMaterial({
+    color: 0x000000,
+  })
+
+  constructor(scene: THREE.Scene, ball1: Ball, ball2: Ball) {
     this.mesh = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([ball1.X, ball2.X]),
-      new THREE.LineBasicMaterial({ color: 0x000000 })
+      Spring.material
     )
+    scene.add(this.mesh)
+
     this.ball1 = ball1
     this.ball2 = ball2
   }
 
   updateState() {
-    this.recalculatePositions()
-
     const F1 = tmp_1
     const F2 = tmp_2
 
@@ -42,7 +47,7 @@ export class Spring {
     this.ball2.F.add(F2)
   }
 
-  private recalculatePositions() {
+  repaint() {
     // for petter perfomance - updated reference
     const positions = this.mesh.geometry.getAttribute('position')
       .array as number[]
