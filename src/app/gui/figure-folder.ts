@@ -4,7 +4,7 @@ import { positionControl, floatControl } from './controls'
 
 export function createFigureFolder(
   gui: GUI,
-  onToggleFigure: (v: boolean) => void,
+  onToggleFigure: () => void,
   onFigurePositionChange: () => void
 ) {
   const folder = gui.addFolder('Figure')
@@ -46,5 +46,5 @@ export function createFigureFolder(
   yCtrl.onChange(onFigurePositionChange)
   zCtrl.onChange(onFigurePositionChange)
 
-  folder.add({ v: true }, 'v', true).name('Enabled').onChange(onToggleFigure)
+  folder.add(config.figure, 'enabled').name('Enabled').onChange(onToggleFigure)
 }

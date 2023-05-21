@@ -1,7 +1,7 @@
 import * as THREE from 'three'
-import { Ball } from './figures'
-import { config } from '../config'
-import { springForce } from '../physics/formulas'
+import { Ball } from '../figures'
+import { config } from '../../config'
+import { springForce } from '../../physics/formulas'
 
 // for performance
 const tmp_1 = new THREE.Vector3()
@@ -22,6 +22,8 @@ export class Spring {
   }
 
   updateState() {
+    this.recalculatePositions()
+
     const F1 = tmp_1
     const F2 = tmp_2
 
@@ -40,17 +42,17 @@ export class Spring {
     this.ball2.F.add(F2)
   }
 
-  draw() {
+  private recalculatePositions() {
     // for petter perfomance - updated reference
     const positions = this.mesh.geometry.getAttribute('position')
       .array as number[]
 
-    positions[0] = this.ball1.X.x
-    positions[1] = this.ball1.X.y
-    positions[2] = this.ball1.X.z
-    positions[3] = this.ball2.X.x
-    positions[4] = this.ball2.X.y
-    positions[5] = this.ball2.X.z
+    positions[0] = this.ball1._X.x
+    positions[1] = this.ball1._X.y
+    positions[2] = this.ball1._X.z
+    positions[3] = this.ball2._X.x
+    positions[4] = this.ball2._X.y
+    positions[5] = this.ball2._X.z
 
     this.mesh.geometry.attributes.position.needsUpdate = true
     this.mesh.geometry.computeBoundingSphere()

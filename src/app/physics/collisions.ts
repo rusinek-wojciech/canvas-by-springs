@@ -156,21 +156,10 @@ export function ballCollideBall(
   const m1 = (2 * ball2.m) / m
   const m2 = (2 * ball1.m) / m
 
-  // reaction force
-  const fProjection1 = ball1.F.dot(X)
-  ball1.F.sub(buff.copy(X).multiplyScalar(fProjection1))
-
-  const fProjection2 = ball2.F.dot(X)
-  ball2.F.sub(buff.copy(X).multiplyScalar(fProjection2))
-
   // bounce
   const vProjection = V.dot(X)
   ball1.V.sub(buff.copy(X).multiplyScalar(m1 * vProjection * energyRetain))
   ball2.V.add(buff.copy(X).multiplyScalar(m2 * vProjection * energyRetain))
-
-  // align position
-  ball1.X.copy(X.multiplyScalar(radiuses).add(ball1.X))
-  ball2.X.copy(X.multiplyScalar(radiuses).add(ball2.X))
 
   return true
 }

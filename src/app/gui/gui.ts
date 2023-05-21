@@ -7,15 +7,17 @@ import { percentControl } from './controls'
 
 export function createGui(options: {
   onRestartClick: () => void
-  onToggleFigure: (v: boolean) => void
+  onToggleFigure: () => void
   onFigurePositionChange: () => void
+  onLightPositionChange: () => void
 }) {
   const gui = new GUI()
 
   const folder = gui.addFolder('Application')
   percentControl(folder, config.app, 'performance', 'Performance')
 
-  createEnvironmentFolder(gui)
+  createEnvironmentFolder(gui, options.onLightPositionChange)
+
   createFigureFolder(
     gui,
     options.onToggleFigure,

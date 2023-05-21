@@ -1,5 +1,5 @@
-import { Ball } from './figures'
-import { Spring } from './spring'
+import { Ball } from '../figures'
+import { Spring } from './spring.class'
 
 export const createSpringMesh = {
   square: createSquareMesh,

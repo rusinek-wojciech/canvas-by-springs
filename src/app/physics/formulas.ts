@@ -48,9 +48,10 @@ export function springForce(
   _V1: THREE.Vector3,
   _V2: THREE.Vector3
 ) {
-  const _X = F1.copy(_X1).sub(_X2).length()
-  const factor = (-K * (_X - L)) / _X
+  const distance = F1.copy(_X1).sub(_X2).length()
+  const factor = (-K * (distance - L)) / distance
+  const bFactor = F2.copy(_V1).sub(_V2).multiplyScalar(B)
 
-  F1.multiplyScalar(factor).sub(F2.copy(_V1).sub(_V2).multiplyScalar(B))
+  F1.multiplyScalar(factor).sub(bFactor)
   F2.copy(F1).negate()
 }

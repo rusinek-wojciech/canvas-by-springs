@@ -2,11 +2,12 @@ import * as THREE from 'three'
 import { config } from '../../config'
 import { position, velocity } from '../../physics/formulas'
 import { ballCollideBall } from '../../physics/collisions'
-import { Figure } from './figure.abstract.class'
 
-export class Ball extends Figure<THREE.SphereGeometry> {
+export class Ball {
+  readonly mesh
   readonly m: number
 
+  readonly X: THREE.Vector3
   readonly _X = new THREE.Vector3()
   readonly _V = new THREE.Vector3()
   readonly V = new THREE.Vector3()
@@ -14,19 +15,19 @@ export class Ball extends Figure<THREE.SphereGeometry> {
   readonly F = new THREE.Vector3()
 
   constructor(position: THREE.Vector3, color: string, mass: number) {
-    const geometry = new THREE.SphereGeometry(config.canvas.ball.radius, 8, 4)
-    super(
-      geometry,
-      position,
+    this.mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(config.canvas.ball.radius, 8, 4),
       new THREE.MeshStandardMaterial({
         color,
       })
     )
+    this.X = this.mesh.position
+    this.X.copy(position)
     this.m = mass
   }
 
   get r() {
-    return this.geometry.parameters.radius
+    return this.mesh.geometry.parameters.radius
   }
 
   updateState(dt: number) {
@@ -40,8 +41,6 @@ export class Ball extends Figure<THREE.SphereGeometry> {
   }
 
   collide(ball: Ball) {
-    return this.isEnabled
-      ? ballCollideBall(ball, this, config.environment.energyRetain)
-      : false
+    return ballCollideBall(ball, this, config.environment.energyRetain)
   }
 }

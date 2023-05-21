@@ -1,8 +1,9 @@
 import * as THREE from 'three'
-import { createCamera } from './camera'
-import { createScene } from './scene/scene'
+import { createCamera } from './scene/camera'
 import { config } from './config'
 import { createGui } from './gui/gui'
+import { Canvas } from './scene/canvas'
+import { Cone, Cube, Sphere } from './scene/figures'
 
 function createRenderer() {
   const renderer = new THREE.WebGLRenderer({
@@ -13,8 +14,45 @@ function createRenderer() {
   })
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(window.innerWidth, window.innerHeight)
+  // renderer.shadowMap.enabled = true
   document.body.appendChild(renderer.domElement)
   return renderer
+}
+
+function createScene() {
+  const scene = new THREE.Scene()
+  scene.background = new THREE.Color(0x87ceeb)
+
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  directionalLight.position.copy(config.environment.lightPosition)
+  directionalLight.target.position.copy(config.environment.lightPosition)
+  directionalLight.shadow.bias = -0.001
+  directionalLight.shadow.camera.near = 0.1
+  directionalLight.shadow.camera.far = 500.0
+  directionalLight.shadow.camera.near = 0.5
+  directionalLight.shadow.camera.far = 500.0
+  directionalLight.shadow.camera.left = 100
+  directionalLight.shadow.camera.right = -100
+  directionalLight.shadow.camera.top = 100
+  directionalLight.shadow.camera.bottom = -100
+  // directionalLight.castShadow = true
+  scene.add(directionalLight)
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+  scene.add(ambientLight)
+
+  const CreateFigure = {
+    cube: Cube,
+    sphere: Sphere,
+    cone: Cone,
+  } as const
+
+  return {
+    scene,
+    canvas: new Canvas(scene),
+    figure: new CreateFigure[config.figure.type](scene, config.figure.position),
+    directionalLight,
+  }
 }
 
 export function loadApp() {
@@ -26,29 +64,12 @@ export function loadApp() {
 
   function handleStart() {
     scene = createScene()
-    const { balls, figure, springs } = scene
+    const { figure, canvas } = scene
 
     renderer.setAnimationLoop(() => {
       const dt = clock.getDelta()
-
-      for (let i = 0; i < balls.length; i++) {
-        balls[i].updateState(dt)
-      }
-      for (let i = 0; i < springs.length; i++) {
-        springs[i].updateState()
-      }
-      for (let i = 0; i < balls.length; i++) {
-        figure.collide(balls[i])
-      }
-      for (let i = 0; i < balls.length; i++) {
-        for (let j = i + 1; j < balls.length; j++) {
-          balls[i].collide(balls[j])
-        }
-      }
-      for (let i = 0; i < springs.length; i++) {
-        springs[i].draw()
-      }
-
+      canvas.updateState(dt)
+      canvas.collide(figure)
       renderer.render(scene.scene, camera)
     })
   }
@@ -59,11 +80,14 @@ export function loadApp() {
       renderer.setPixelRatio(window.devicePixelRatio * config.app.performance)
       handleStart()
     },
-    onToggleFigure(value) {
-      scene.figure.mesh.visible = value
+    onToggleFigure() {
+      scene.figure.isEnabled = config.figure.enabled
     },
     onFigurePositionChange() {
       scene.figure.X.copy(config.figure.position)
+    },
+    onLightPositionChange() {
+      scene.directionalLight.position.copy(config.environment.lightPosition)
     },
   })
 
