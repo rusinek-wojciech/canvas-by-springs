@@ -12,8 +12,6 @@ export abstract class Figure<T extends THREE.BufferGeometry> {
 
   constructor(scene: THREE.Scene, geometry: T, position: THREE.Vector3) {
     this.mesh = new THREE.Mesh(geometry, Figure.material)
-    // this.mesh.castShadow = true
-    // this.mesh.receiveShadow = true
 
     this.X = this.mesh.position
     this.X.copy(position)

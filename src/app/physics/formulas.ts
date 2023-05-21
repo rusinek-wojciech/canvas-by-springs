@@ -1,5 +1,8 @@
 import * as THREE from 'three'
 
+const tmp_1 = new THREE.Vector3()
+const tmp_2 = new THREE.Vector3()
+
 /**
  * V = (F / m) * dt + _V
  *
@@ -48,10 +51,12 @@ export function springForce(
   _V1: THREE.Vector3,
   _V2: THREE.Vector3
 ) {
-  const distance = F1.copy(_X1).sub(_X2).length()
-  const factor = (-K * (distance - L)) / distance
-  const bFactor = F2.copy(_V1).sub(_V2).multiplyScalar(B)
+  const X = tmp_1.copy(_X1).sub(_X2)
+  const xLength = X.length()
+  const factor = (-K * (xLength - L)) / xLength
 
-  F1.multiplyScalar(factor).sub(bFactor)
+  const R = tmp_2.copy(_V1).sub(_V2).multiplyScalar(B)
+
+  F1.copy(X).multiplyScalar(factor).sub(R)
   F2.copy(F1).negate()
 }
