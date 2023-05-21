@@ -9,8 +9,12 @@ class Plane {
   readonly ball3
   readonly ball4
 
-  private static readonly material = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
+  private static readonly material = new THREE.MeshPhysicalMaterial({
+    roughness: 0.4,
+    transmission: 0.4,
+    thickness: 0.4,
+    color: 0xb7a99b,
+    transparent: true,
     side: THREE.DoubleSide,
   })
 
@@ -29,6 +33,9 @@ class Plane {
       ]),
       Plane.material
     )
+
+    // this.mesh.castShadow = true
+    // this.mesh.receiveShadow = true
   }
 }
 

@@ -7,10 +7,10 @@ import { Cone, Cube, Sphere } from './scene/figures'
 
 function createRenderer() {
   const renderer = new THREE.WebGLRenderer({
-    antialias: false,
+    // antialias: false,
     powerPreference: 'high-performance',
-    alpha: true,
-    precision: 'lowp',
+    // alpha: true,
+    // precision: 'lowp',
   })
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(window.innerWidth, window.innerHeight)
@@ -26,6 +26,7 @@ function createScene() {
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0)
   directionalLight.position.copy(config.environment.lightPosition)
   directionalLight.target.position.copy(config.environment.lightPosition)
+  // directionalLight.castShadow = true
   directionalLight.shadow.bias = -0.001
   directionalLight.shadow.camera.near = 0.1
   directionalLight.shadow.camera.far = 500.0
@@ -35,7 +36,6 @@ function createScene() {
   directionalLight.shadow.camera.right = -100
   directionalLight.shadow.camera.top = 100
   directionalLight.shadow.camera.bottom = -100
-  // directionalLight.castShadow = true
   scene.add(directionalLight)
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)

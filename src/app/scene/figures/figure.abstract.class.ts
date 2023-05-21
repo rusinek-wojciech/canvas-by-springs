@@ -3,18 +3,18 @@ import { Ball } from '../canvas/ball.class'
 import { config } from '../../config'
 
 export abstract class Figure<T extends THREE.BufferGeometry> {
-  readonly mesh: THREE.Mesh<T, THREE.MeshStandardMaterial>
+  readonly mesh: THREE.Mesh<T, THREE.MeshLambertMaterial>
   readonly X: THREE.Vector3
 
-  constructor(
-    scene: THREE.Scene,
-    geometry: T,
-    position: THREE.Vector3,
-    material: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({
-      color: 'teal',
-    })
-  ) {
-    this.mesh = new THREE.Mesh(geometry, material)
+  private static readonly material = new THREE.MeshLambertMaterial({
+    color: 'teal',
+  })
+
+  constructor(scene: THREE.Scene, geometry: T, position: THREE.Vector3) {
+    this.mesh = new THREE.Mesh(geometry, Figure.material)
+    // this.mesh.castShadow = true
+    // this.mesh.receiveShadow = true
+
     this.X = this.mesh.position
     this.X.copy(position)
 
