@@ -5,6 +5,7 @@ const tmp_2 = new THREE.Vector3()
 const tmp_3 = new THREE.Vector3()
 const tmp_4 = new THREE.Vector3()
 const tmp_5 = new THREE.Vector3()
+const tmp_6 = new THREE.Vector3()
 
 function rungeKutta(vec: THREE.Vector3, dt: number) {
   const k1 = tmp_1.copy(vec).multiplyScalar(dt)
@@ -42,7 +43,7 @@ export function velocity(
 ) {
   V.copy(_V)
     .add(rungeKutta(A, dt))
-    .add(rungeKutta(F.divideScalar(m), dt))
+    .add(rungeKutta(tmp_6.copy(F).divideScalar(m), dt))
 }
 
 /**
