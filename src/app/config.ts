@@ -8,18 +8,18 @@ export const config = {
     performance: 1.0, // <0.0, 1.0>
   },
   environment: {
-    gravity: new THREE.Vector3(0, -1.3, 0),
-    wind: new THREE.Vector3(0, 0, 0),
+    gravityAcceleration: new THREE.Vector3(0, -9.8, 0), // [m/s^2]
+    windForce: new THREE.Vector3(0, 0, 0), // [N]
     lightPosition: new THREE.Vector3(3, 6, 1),
-    energyRetain: 0.3, // <0.0, 1.0>
+    energyRetain: 0.3, // <0.0, 1.0> [%]
   },
   figure: {
     type: 'cube' as 'sphere' | 'cube' | 'cone',
     position: new THREE.Vector3(0, 0, 0),
-    radius: 8,
-    width: 6,
-    height: 8,
-    depth: 6,
+    radius: 8, // [m]
+    width: 6, // [m]
+    height: 8, // [m]
+    depth: 6, // [m]
     enabled: true as boolean,
     angle: {
       // TODO: implement
@@ -37,15 +37,15 @@ export const config = {
       roll: 0.0, // <0.0, 1.0>
     },
     perRow: 20, // integer
-    distanceBetween: 0.4,
+    distanceBetween: 0.4, // [m]
     ball: {
-      mass: 1,
-      radius: 0.1,
+      mass: 1, // [kg]
+      radius: 0.1, // [m]
     },
     spring: {
-      L: 0.4,
-      K: 30,
-      B: 5,
+      L: 0.4, // [m]
+      K: 30, // [N/m]
+      B: 5, // [kg/s],
     },
   },
 } as const

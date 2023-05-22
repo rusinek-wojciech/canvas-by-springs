@@ -32,7 +32,7 @@ export const vectorControl: VecControlFn = (folder, target) => {
 }
 
 export const floatControl: ControlFn = (folder, target, prop, name) => {
-  return folder.add(target, prop, 0.0, undefined, undefined).name(name)
+  return folder.add(target, prop, 0.0, undefined, 0.01).name(name)
 }
 
 export const percentControl: ControlFn = (folder, target, prop, name) => {

@@ -35,8 +35,9 @@ export class Ball {
     this._V.copy(this.V)
     this._X.copy(this.X)
 
-    this.F.copy(config.environment.gravity).add(config.environment.wind)
-    velocity(this.V, this._F, this.m, this._V, dt)
+    this.F.copy(config.environment.windForce)
+    const a = config.environment.gravityAcceleration
+    velocity(this.V, this._F, this.m, this._V, a, dt)
     position(this.X, this.V, this._X, dt)
   }
 
