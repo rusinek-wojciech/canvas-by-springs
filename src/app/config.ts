@@ -8,7 +8,7 @@ export const config = {
     performance: 1.0, // <0.0, 1.0>
   },
   environment: {
-    gravityAcceleration: new THREE.Vector3(0, -9.8, 0), // [m/s^2]
+    gravityAcceleration: new THREE.Vector3(0, -1, 0), // [m/s^2]
     windForce: new THREE.Vector3(0, 0, 0), // [N]
     lightPosition: new THREE.Vector3(3, 6, 1),
     energyRetain: 0.3, // <0.0, 1.0> [%]

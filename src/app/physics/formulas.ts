@@ -50,14 +50,6 @@ export function velocity(
  *
  * @param X has result!
  */
-export function position_(
-  X: THREE.Vector3,
-  V: THREE.Vector3,
-  _X: THREE.Vector3,
-  dt: number
-) {
-  X.copy(V).multiplyScalar(dt).add(_X)
-}
 export function position(
   X: THREE.Vector3,
   V: THREE.Vector3,

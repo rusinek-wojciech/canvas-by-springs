@@ -55,7 +55,9 @@ export function loadApp() {
     const { figure, canvas } = scene
 
     renderer.setAnimationLoop(() => {
-      const dt = clock.getDelta()
+      // workaround for very big delta
+      const dt = Math.min(clock.getDelta(), 0.1)
+
       canvas.updateState(dt)
       canvas.collide(figure)
       renderer.render(scene.scene, camera)
