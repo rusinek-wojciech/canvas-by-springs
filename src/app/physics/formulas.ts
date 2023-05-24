@@ -61,28 +61,30 @@ export function position(
 }
 
 /**
- *  F1 = -F2 = -k * (||_X1 - _X2|| - L) * ((_X1 - _X2) / (||_X1 - _X2||)) - b * (_V1 - _V2)
+ *  X = X1 - X2
+ *  V = V1 - V2
+ *  F = (-K * (||X|| - L) * X / ||X||) - b * V
  *
- * @param F1 has result!
- * @param F2 has result!
+ * @param F has result!
  */
 export function springForce(
-  F1: THREE.Vector3,
-  F2: THREE.Vector3,
+  F: THREE.Vector3,
+  X1: THREE.Vector3,
+  X2: THREE.Vector3,
+  V1: THREE.Vector3,
+  V2: THREE.Vector3,
   K: number,
   L: number,
-  B: number,
-  _X1: THREE.Vector3,
-  _X2: THREE.Vector3,
-  _V1: THREE.Vector3,
-  _V2: THREE.Vector3
+  B: number
 ) {
-  const X = tmp_1.copy(_X1).sub(_X2)
+  const X = tmp_1
+  const V = tmp_2
+
+  X.copy(X1).sub(X2)
+  V.copy(V1).sub(V2)
+
   const xLength = X.length()
   const factor = (-K * (xLength - L)) / xLength
 
-  const R = tmp_2.copy(_V1).sub(_V2).multiplyScalar(B)
-
-  F1.copy(X).multiplyScalar(factor).sub(R)
-  F2.copy(F1).negate()
+  F.copy(X).multiplyScalar(factor).sub(V.multiplyScalar(B))
 }

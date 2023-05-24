@@ -71,51 +71,44 @@ export function ballCollideCube(ball: Ball, cube: Cube, energyRetain: number) {
   const buff = tmp_1
 
   X.copy(ball.X).sub(cube.X)
-  _X.copy(ball._X).sub(cube.X)
   D.set(cube.w, cube.h, cube.d).multiplyScalar(0.5).addScalar(ball.r)
 
-  if (
-    D.x >= X.x &&
-    -D.x <= X.x &&
-    D.y >= X.y &&
-    -D.y <= X.y &&
-    D.z >= X.z &&
-    -D.z <= X.z
-  ) {
-    if (D.x <= _X.x) {
-      ball.F.setX(0)
-      ball.V.reflect(buff.set(energyRetain, 0, 0))
-      ball.X.setX(cube.X.x + D.x)
-    } else if (-D.x >= _X.x) {
-      ball.F.setX(0)
-      ball.V.reflect(buff.set(energyRetain, 0, 0))
-      ball.X.setX(cube.X.x - D.x)
-    }
+  if (X.x > D.x) return false
+  if (X.y > D.y) return false
+  if (X.z > D.z) return false
+  if (-X.x > D.x) return false
+  if (-X.y > D.y) return false
+  if (-X.z > D.z) return false
 
-    if (D.y <= _X.y) {
-      ball.F.setY(0)
-      ball.V.reflect(buff.set(0, energyRetain, 0))
-      ball.X.setY(cube.X.y + D.y)
-    } else if (-D.y >= _X.y) {
-      ball.F.setY(0)
-      ball.V.reflect(buff.set(0, energyRetain, 0))
-      ball.X.setY(cube.X.y - D.y)
-    }
+  _X.copy(ball._X).sub(cube.X)
 
-    if (D.z <= _X.z) {
-      ball.F.setZ(0)
-      ball.V.reflect(buff.set(0, 0, energyRetain))
-      ball.X.setZ(cube.X.z + D.z)
-    } else if (-D.z >= _X.z) {
-      ball.F.setZ(0)
-      ball.V.reflect(buff.set(0, 0, energyRetain))
-      ball.X.setZ(cube.X.z - D.z)
-    }
-
-    return true
+  if (D.x <= _X.x) {
+    ball.F.setX(0)
+    ball.V.reflect(buff.set(energyRetain, 0, 0))
+    ball.X.setX(cube.X.x + D.x)
+  } else if (-D.x >= _X.x) {
+    ball.F.setX(0)
+    ball.V.reflect(buff.set(energyRetain, 0, 0))
+    ball.X.setX(cube.X.x - D.x)
+  } else if (D.y <= _X.y) {
+    ball.F.setY(0)
+    ball.V.reflect(buff.set(0, energyRetain, 0))
+    ball.X.setY(cube.X.y + D.y)
+  } else if (-D.y >= _X.y) {
+    ball.F.setY(0)
+    ball.V.reflect(buff.set(0, energyRetain, 0))
+    ball.X.setY(cube.X.y - D.y)
+  } else if (D.z <= _X.z) {
+    ball.F.setZ(0)
+    ball.V.reflect(buff.set(0, 0, energyRetain))
+    ball.X.setZ(cube.X.z + D.z)
+  } else if (-D.z >= _X.z) {
+    ball.F.setZ(0)
+    ball.V.reflect(buff.set(0, 0, energyRetain))
+    ball.X.setZ(cube.X.z - D.z)
   }
 
-  return false
+  return true
 }
 
 /**
@@ -141,7 +134,6 @@ export function ballCollideBall(
   const X = tmp_2
   const buff = tmp_3
 
-  V.copy(ball1.V).sub(ball2.V)
   X.copy(ball1.X).sub(ball2.X)
   const radiuses = ball1.r + ball2.r
 
@@ -149,6 +141,7 @@ export function ballCollideBall(
     return false
   }
 
+  V.copy(ball1.V).sub(ball2.V)
   X.normalize()
 
   // mass

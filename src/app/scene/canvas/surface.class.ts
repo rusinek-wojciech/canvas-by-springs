@@ -57,19 +57,19 @@ export class Surface {
     for (const { ball1, ball2, ball3, ball4, mesh } of this.planes) {
       const positions = mesh.geometry.getAttribute('position').array as number[]
 
-      positions[0] = ball1._X.x
-      positions[1] = ball1._X.y
-      positions[2] = ball1._X.z
-      positions[3] = ball2._X.x
-      positions[4] = ball2._X.y
-      positions[5] = ball2._X.z
+      positions[0] = ball1.X.x
+      positions[1] = ball1.X.y
+      positions[2] = ball1.X.z
+      positions[3] = ball2.X.x
+      positions[4] = ball2.X.y
+      positions[5] = ball2.X.z
 
-      positions[6] = ball3._X.x
-      positions[7] = ball3._X.y
-      positions[8] = ball3._X.z
-      positions[9] = ball4._X.x
-      positions[10] = ball4._X.y
-      positions[11] = ball4._X.z
+      positions[6] = ball3.X.x
+      positions[7] = ball3.X.y
+      positions[8] = ball3.X.z
+      positions[9] = ball4.X.x
+      positions[10] = ball4.X.y
+      positions[11] = ball4.X.z
 
       mesh.geometry.attributes.position.needsUpdate = true
       mesh.geometry.computeBoundingSphere()

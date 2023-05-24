@@ -29,15 +29,18 @@ export class Canvas {
   }
 
   updateState(dt: number) {
-    this.surface.repaint()
-    for (let i = 0; i < this.springs.length; i++) {
-      this.springs[i].repaint()
-    }
     for (let i = 0; i < this.balls.length; i++) {
       this.balls[i].updateState(dt)
     }
     for (let i = 0; i < this.springs.length; i++) {
       this.springs[i].updateState()
+    }
+  }
+
+  repaint() {
+    this.surface.repaint()
+    for (let i = 0; i < this.springs.length; i++) {
+      this.springs[i].repaint()
     }
   }
 

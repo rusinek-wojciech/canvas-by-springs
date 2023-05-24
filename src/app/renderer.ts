@@ -60,6 +60,8 @@ export function loadApp() {
 
       canvas.updateState(dt)
       canvas.collide(figure)
+      canvas.repaint()
+
       renderer.render(scene.scene, camera)
     })
   }

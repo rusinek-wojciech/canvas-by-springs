@@ -21,8 +21,11 @@ export class Ball {
         color,
       })
     )
+
     this.X = this.mesh.position
     this.X.copy(position)
+    this._X.copy(position)
+
     this.m = mass
   }
 
