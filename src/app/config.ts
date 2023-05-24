@@ -8,13 +8,16 @@ export const config = {
     performance: 1.0, // <0.0, 1.0>
   },
   environment: {
-    gravityAcceleration: new THREE.Vector3(0, -1, 0), // [m/s^2]
+    energyRetain: {
+      collision: 0.75, // <0.0, 1.0> [%]
+      airDrag: 0.99, // <0.0, 1.0> [%]
+    },
+    gravityAcceleration: new THREE.Vector3(0, -4, 0), // [m/s^2]
     windForce: new THREE.Vector3(0, 0, 0), // [N]
     lightPosition: new THREE.Vector3(3, 6, 1),
-    energyRetain: 0.3, // <0.0, 1.0> [%]
   },
   figure: {
-    type: 'cube' as 'sphere' | 'cube' | 'cone',
+    type: 'sphere' as 'sphere' | 'cube' | 'cone',
     position: new THREE.Vector3(0, 0, 0),
     radius: 8, // [m]
     width: 6, // [m]
@@ -39,13 +42,13 @@ export const config = {
     perRow: 20, // integer
     distanceBetween: 0.4, // [m]
     ball: {
-      mass: 1, // [kg]
+      mass: 1.0, // [kg]
       radius: 0.1, // [m]
     },
     spring: {
       L: 0.4, // [m]
-      K: 30, // [N/m]
-      B: 5, // [kg/s],
+      K: 100, // [N/m]
+      B: 7.5, // [kg/s],
     },
   },
 } as const

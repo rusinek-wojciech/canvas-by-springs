@@ -28,7 +28,7 @@ export class Cone extends Figure<THREE.ConeGeometry> {
 
   collide(ball: Ball) {
     return this.isEnabled
-      ? ballCollideCone(ball, this, config.environment.energyRetain)
+      ? ballCollideCone(ball, this, config.environment.energyRetain.collision)
       : false
   }
 }

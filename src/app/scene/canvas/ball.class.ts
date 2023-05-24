@@ -39,12 +39,17 @@ export class Ball {
     this._X.copy(this.X)
 
     this.F.copy(config.environment.windForce)
-    const a = config.environment.gravityAcceleration
-    velocity(this.V, this._F, this.m, this._V, a, dt)
+    const A = config.environment.gravityAcceleration
+    velocity(this.V, this._F, this.m, this._V, A, dt)
+    this.V.multiplyScalar(config.environment.energyRetain.airDrag)
     position(this.X, this.V, this._X, dt)
   }
 
   collide(ball: Ball) {
-    return ballCollideBall(ball, this, config.environment.energyRetain)
+    return ballCollideBall(
+      ball,
+      this,
+      config.environment.energyRetain.collision
+    )
   }
 }

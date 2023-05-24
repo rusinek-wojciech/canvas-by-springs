@@ -7,19 +7,23 @@ export function createEnvironmentFolder(
   onLightPositionChange: () => void
 ) {
   const folder = gui.addFolder('Environment')
-  const { gravityAcceleration, windForce, lightPosition } = config.environment
+  const { gravityAcceleration, windForce, lightPosition, energyRetain } =
+    config.environment
 
-  percentControl(folder, config.environment, 'energyRetain', 'Energy retain')
+  const energyFolder = folder.addFolder('Energy retain')
+  percentControl(energyFolder, energyRetain, 'collision', 'Collision')
+  percentControl(energyFolder, energyRetain, 'airDrag', 'Air drag')
+  energyFolder.open()
 
-  const gravFolder = folder.addFolder('Gravity')
+  const gravFolder = folder.addFolder('Gravity acceleration')
   vectorControl(gravFolder, gravityAcceleration)
   gravFolder.open()
 
-  const windFolder = folder.addFolder('Wind')
+  const windFolder = folder.addFolder('Wind force')
   vectorControl(windFolder, windForce)
   windFolder.open()
 
-  const lightFolder = folder.addFolder('Light')
+  const lightFolder = folder.addFolder('Light position')
   const [xCtrl, yCtrl, zCtrl] = positionControl(lightFolder, lightPosition)
   xCtrl.onChange(onLightPositionChange)
   yCtrl.onChange(onLightPositionChange)
