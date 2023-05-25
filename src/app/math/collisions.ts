@@ -6,39 +6,37 @@ const tmp_2 = new THREE.Vector3()
 const tmp_3 = new THREE.Vector3()
 const tmp_4 = new THREE.Vector3()
 const tmp_5 = new THREE.Vector3()
-const tmp_6 = new THREE.Vector3()
 
 /**
  * @returns true if collision
  */
 export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
-  const X = tmp_1
-  const T = tmp_2
-  const Y = tmp_3
   const buff = tmp_4
-  const D = tmp_5
-  const W = tmp_6
 
-  X.copy(ball.X)
-    .sub(cone.X)
-    .add(T.set(0, 0.5 * cone.h, 0))
+  const X = tmp_1.copy(ball.X).sub(cone.X).add(cone.translateToOrigin)
 
   if (X.y > cone.h || X.y < 0) {
     return false
   }
 
-  Y.set(X.x, 0, X.z)
-  const radius = cone.r * (1.0 - X.y / cone.h)
-  const yLength = Y.length()
+  const XZ = tmp_3.set(X.x, 0, X.z)
+  const xzLength = XZ.length()
 
-  if (yLength > radius + ball.r) {
+  if (xzLength > cone.r + ball.r) {
     return false
   }
 
-  // normal to wall in place of collision
-  W.copy(Y.normalize()).multiplyScalar(cone.r).sub(buff.set(0, cone.h, 0))
-  D.set(-X.z * X.y, 0, X.x * X.y)
-  const N = D.cross(W).normalize()
+  // normal in place of collision
+  const N = cone.getNormal(tmp_5.copy(XZ.normalize()))
+
+  // point in place of collision with radius
+  const X0 = cone
+    .getX0(XZ, X.y, xzLength)
+    .add(buff.copy(N).multiplyScalar(ball.r))
+
+  if (X0.dot(N) < X.dot(N)) {
+    return false
+  }
 
   // reaction force
   const fProjection = ball.F.dot(N)
@@ -49,14 +47,7 @@ export function ballCollideCone(ball: Ball, cone: Cone, energyRetain: number) {
   ball.V.sub(buff.copy(N).multiplyScalar(2 * vProjection * energyRetain))
 
   // align position
-  const n = ball.r + cone.cos * (radius - yLength) + yLength / cone.cos
-  ball.X.copy(
-    buff
-      .set(0, X.y - n * cone.sin, 0)
-      .sub(T)
-      .add(cone.X)
-      .add(N.multiplyScalar(n))
-  )
+  ball.X.copy(X0.sub(cone.translateToOrigin).add(cone.X))
 
   return true
 }
