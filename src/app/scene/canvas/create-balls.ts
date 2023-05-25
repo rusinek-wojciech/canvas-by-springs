@@ -1,69 +1,48 @@
 import * as THREE from 'three'
 import { config } from '../../config'
 import { Ball } from '../figures'
+import { rotation } from '../../math/rotations'
 
 export function createBalls() {
   const { angle, perRow, distanceBetween, position, ball } = config.canvas
-  const { yaw, roll } = angle
 
-  const yDistance = distanceBetween * Math.sin(roll)
-  const zDistance = distanceBetween * Math.cos(roll)
-
-  const rot = new THREE.Matrix3()
-  rot.set(
-    Math.cos(yaw),
-    0,
-    Math.sin(yaw),
-    0,
-    1,
-    0,
-    -Math.sin(yaw),
-    0,
-    Math.cos(yaw)
+  const { yaw, pitch, roll } = angle
+  const rot = rotation(
+    (pitch * Math.PI) / 180,
+    (yaw * Math.PI) / 180,
+    (roll * Math.PI) / 180
   )
 
-  const num = perRow - 1
-  const length = distanceBetween * num
-  const yLength = yDistance * num
-  const zLength = zDistance * num
-
   const balls: Ball[][] = []
+  const length = distanceBetween * (perRow - 1)
 
-  let dx = 0
-  let dy = 0
-  let dz = 0
-
+  let di = 0
   let i = 0
+
   while (i < perRow) {
     const row: Ball[] = []
 
-    dx = 0
-
+    let dj = 0
     let j = 0
+
     while (j < perRow) {
-      const pos = new THREE.Vector3(
-        dx - 0.5 * length,
-        dy - 0.5 * yLength,
-        dz - 0.5 * zLength
-      )
-      pos.applyMatrix3(rot)
-
       row.push(
-        new Ball(pos.add(position), colorByIterators(dx, dz, length), ball.mass)
+        new Ball(
+          new THREE.Vector3(dj - 0.5 * length, 0, di - 0.5 * length)
+            .applyMatrix3(rot)
+            .add(position),
+          colorByIterators(dj, di, length),
+          ball.mass
+        )
       )
 
-      dx += distanceBetween
+      dj += distanceBetween
       j++
     }
     balls.push(row)
 
-    dy += yDistance
-    dz += zDistance
+    di += distanceBetween
     i++
-  }
-
-  for (let i = 0; i < perRow; i++) {
-    for (let j = 0; j < perRow; j++) {}
   }
 
   return balls

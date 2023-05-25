@@ -4,7 +4,7 @@ import {
   positionControl,
   floatControl,
   intControl,
-  percentControl,
+  angleControl,
 } from './controls'
 
 export function createCanvasFolder(gui: GUI, onToggleSurface: () => void) {
@@ -17,19 +17,19 @@ export function createCanvasFolder(gui: GUI, onToggleSurface: () => void) {
   folder.add(config.canvas, 'surface').name('Surface').onChange(onToggleSurface)
   intControl(folder, config.canvas, 'perRow', 'Balls per row')
   floatControl(folder, config.canvas, 'distanceBetween', 'Distance between')
-  positionControl(folder, position)
 
-  percentControl(folder, angle, 'yaw', 'Yaw')
-  percentControl(folder, angle, 'roll', 'Roll')
+  const orFolder = folder.addFolder('Orientation')
+  positionControl(orFolder, position)
+  angleControl(orFolder, angle, 'yaw', 'Yaw')
+  angleControl(orFolder, angle, 'pitch', 'Pitch')
+  angleControl(orFolder, angle, 'roll', 'Roll')
 
   const ballFolder = folder.addFolder('Ball')
   floatControl(ballFolder, ball, 'radius', 'Radius')
   floatControl(ballFolder, ball, 'mass', 'Mass')
-  ballFolder.open()
 
-  const springFolder = folder.addFolder('Springs')
+  const springFolder = folder.addFolder('Spring')
   floatControl(springFolder, spring, 'L', 'L')
   floatControl(springFolder, spring, 'K', 'K')
   floatControl(springFolder, spring, 'B', 'B')
-  springFolder.open()
 }

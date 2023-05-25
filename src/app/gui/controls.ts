@@ -42,3 +42,7 @@ export const percentControl: ControlFn = (folder, target, prop, name) => {
 export const intControl: ControlFn = (folder, target, prop, name) => {
   return folder.add(target, prop, 0, undefined, 1).name(name)
 }
+
+export const angleControl: ControlFn = (folder, target, prop, name) => {
+  return folder.add(target, prop, 0, 360, 1).name(name)
+}

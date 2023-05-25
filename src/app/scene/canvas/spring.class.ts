@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Ball } from '../figures'
 import { config } from '../../config'
-import { springForce } from '../../physics/formulas'
+import { springForce } from '../../math/formulas'
 
 const tmp_1 = new THREE.Vector3()
 

@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { config } from '../../config'
-import { position, velocity } from '../../physics/formulas'
-import { ballCollideBall } from '../../physics/collisions'
+import { position, velocity } from '../../math/formulas'
+import { ballCollideBall } from '../../math/collisions'
 
 export class Ball {
   readonly mesh

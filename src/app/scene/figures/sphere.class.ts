@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { ballCollideSphere } from '../../physics/collisions'
+import { ballCollideSphere } from '../../math/collisions'
 import { Ball } from '../canvas/ball.class'
 import { Figure } from './figure.abstract.class'
 import { config } from '../../config'

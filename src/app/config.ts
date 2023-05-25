@@ -25,10 +25,9 @@ export const config = {
     depth: 6, // [m]
     enabled: true as boolean,
     angle: {
-      // TODO: implement
-      yaw: 0.0, // <0.0, 1.0>
-      pitch0: 0.0, // <0.0, 1.0>
-      roll: 0.0, // <0.0, 1.0>
+      yaw: 0, // <0, 360>
+      pitch: 0, // <0, 360>
+      roll: 0, // <0, 360>
     },
   },
   canvas: {
@@ -36,8 +35,9 @@ export const config = {
     surface: true as boolean,
     position: new THREE.Vector3(0, 15, 0),
     angle: {
-      yaw: 0.0, // <0.0, 1.0>
-      roll: 0.0, // <0.0, 1.0>
+      yaw: 45, // <0, 360>
+      pitch: 0, // <0, 360>
+      roll: 0, // <0, 360>
     },
     perRow: 20, // integer
     distanceBetween: 0.4, // [m]

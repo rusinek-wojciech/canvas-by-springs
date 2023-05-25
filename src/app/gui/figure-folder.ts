@@ -1,6 +1,6 @@
 import { GUI } from 'dat.gui'
 import { config } from '../config'
-import { positionControl, floatControl } from './controls'
+import { positionControl, floatControl, angleControl } from './controls'
 
 export function createFigureFolder(
   gui: GUI,
@@ -8,8 +8,9 @@ export function createFigureFolder(
   onFigurePositionChange: () => void
 ) {
   const folder = gui.addFolder('Figure')
-  const { position } = config.figure
+  const { position, angle } = config.figure
 
+  folder.add(config.figure, 'enabled').name('Enabled').onChange(onToggleFigure)
   const typeCtrl = folder
     .add(config.figure, 'type', ['sphere', 'cube', 'cone'])
     .name('Type')
@@ -41,10 +42,21 @@ export function createFigureFolder(
   typeCtrl.onChange(handleTypeChange)
   handleTypeChange(config.figure.type)
 
-  const [xCtrl, yCtrl, zCtrl] = positionControl(folder, position)
+  const orFolder = folder.addFolder('Orientation')
+  const [xCtrl, yCtrl, zCtrl] = positionControl(orFolder, position)
+  const yaCtrl = angleControl(orFolder, angle, 'yaw', 'Yaw')
+  const paCtrl = angleControl(orFolder, angle, 'pitch', 'Pitch')
+  const raCtrl = angleControl(orFolder, angle, 'roll', 'Roll')
+
   xCtrl.onChange(onFigurePositionChange)
   yCtrl.onChange(onFigurePositionChange)
   zCtrl.onChange(onFigurePositionChange)
+  yaCtrl.onChange(onFigurePositionChange)
+  paCtrl.onChange(onFigurePositionChange)
+  raCtrl.onChange(onFigurePositionChange)
 
-  folder.add(config.figure, 'enabled').name('Enabled').onChange(onToggleFigure)
+  // TODO: remove after implementing rotation for figure
+  yaCtrl.domElement.style.display = 'none'
+  paCtrl.domElement.style.display = 'none'
+  raCtrl.domElement.style.display = 'none'
 }
