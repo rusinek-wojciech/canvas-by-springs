@@ -1,9 +1,10 @@
-import * as THREE from 'three'
+import { Vector3, LineBasicMaterial, Scene, Line, BufferGeometry } from 'three'
+
 import { Ball } from '../figures'
 import { config } from '../../config'
 import { springForce } from '../../math/formulas'
 
-const tmp_1 = new THREE.Vector3()
+const tmp_1 = new Vector3()
 
 export class Spring {
   readonly mesh
@@ -11,13 +12,13 @@ export class Spring {
   readonly ball1
   readonly ball2
 
-  private static readonly material = new THREE.LineBasicMaterial({
+  private static readonly material = new LineBasicMaterial({
     color: 0x000000,
   })
 
-  constructor(scene: THREE.Scene, ball1: Ball, ball2: Ball) {
-    this.mesh = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([ball1.X, ball2.X]),
+  constructor(scene: Scene, ball1: Ball, ball2: Ball) {
+    this.mesh = new Line(
+      new BufferGeometry().setFromPoints([ball1.X, ball2.X]),
       Spring.material
     )
     scene.add(this.mesh)

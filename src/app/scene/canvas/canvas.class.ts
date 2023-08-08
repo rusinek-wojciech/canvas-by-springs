@@ -1,4 +1,5 @@
-import * as THREE from 'three'
+import { Scene } from 'three'
+
 import { config } from '../../config'
 import { Cone, Cube, Sphere } from '../figures'
 import { createSpringMesh } from './create-spring-mesh'
@@ -10,7 +11,7 @@ export class Canvas {
   readonly springs
   readonly surface
 
-  constructor(scene: THREE.Scene) {
+  constructor(scene: Scene) {
     const balls = createBalls()
 
     this.springs = createSpringMesh[config.canvas.type](

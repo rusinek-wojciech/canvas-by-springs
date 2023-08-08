@@ -14,7 +14,7 @@ type VecControlFn = (
 ) => readonly [
   GUIController<object>,
   GUIController<object>,
-  GUIController<object>
+  GUIController<object>,
 ]
 
 export const positionControl: VecControlFn = (folder, target) => {

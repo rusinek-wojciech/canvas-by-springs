@@ -1,4 +1,12 @@
-import * as THREE from 'three'
+import {
+  WebGLRenderer,
+  Scene,
+  Color,
+  DirectionalLight,
+  AmbientLight,
+  Clock,
+} from 'three'
+
 import { createCamera } from './scene/camera'
 import { config } from './config'
 import { createGui } from './gui/gui'
@@ -6,7 +14,7 @@ import { Canvas } from './scene/canvas'
 import { Cone, Cube, Sphere } from './scene/figures'
 
 function createRenderer() {
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = new WebGLRenderer({
     antialias: false,
     powerPreference: 'high-performance',
     precision: 'lowp',
@@ -18,15 +26,15 @@ function createRenderer() {
 }
 
 function createScene() {
-  const scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x87ceeb)
+  const scene = new Scene()
+  scene.background = new Color(0x87ceeb)
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  const directionalLight = new DirectionalLight(0xffffff, 1.0)
   directionalLight.position.copy(config.environment.lightPosition)
   directionalLight.target.position.copy(config.environment.lightPosition)
   scene.add(directionalLight)
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+  const ambientLight = new AmbientLight(0xffffff, 0.5)
   scene.add(ambientLight)
 
   const CreateFigure = {
@@ -46,7 +54,7 @@ function createScene() {
 export function loadApp() {
   const renderer = createRenderer()
   const camera = createCamera(renderer)
-  const clock = new THREE.Clock()
+  const clock = new Clock()
 
   let scene: ReturnType<typeof createScene>
 

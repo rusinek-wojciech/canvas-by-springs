@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import { WebGLRenderer, PerspectiveCamera } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const FOV = 60
@@ -9,8 +9,8 @@ const ORBIT_TARGET = [0, 5, 0] as const
 
 const aspect = () => window.innerWidth / window.innerHeight
 
-export function createCamera(renderer: THREE.WebGLRenderer) {
-  const camera = new THREE.PerspectiveCamera(FOV, aspect(), NEAR, FAR)
+export function createCamera(renderer: WebGLRenderer) {
+  const camera = new PerspectiveCamera(FOV, aspect(), NEAR, FAR)
   camera.position.set(...CAMERA_POSITION)
 
   const controls = new OrbitControls(camera, renderer.domElement)

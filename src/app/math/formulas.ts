@@ -1,13 +1,13 @@
-import * as THREE from 'three'
+import { Vector3 } from 'three'
 
-const tmp_1 = new THREE.Vector3()
-const tmp_2 = new THREE.Vector3()
-const tmp_3 = new THREE.Vector3()
-const tmp_4 = new THREE.Vector3()
-const tmp_5 = new THREE.Vector3()
-const tmp_6 = new THREE.Vector3()
+const tmp_1 = new Vector3()
+const tmp_2 = new Vector3()
+const tmp_3 = new Vector3()
+const tmp_4 = new Vector3()
+const tmp_5 = new Vector3()
+const tmp_6 = new Vector3()
 
-function rungeKutta(vec: THREE.Vector3, dt: number) {
+function rungeKutta(vec: Vector3, dt: number) {
   const k1 = tmp_1.copy(vec).multiplyScalar(dt)
   const k2 = tmp_2
     .copy(vec)
@@ -34,11 +34,11 @@ function rungeKutta(vec: THREE.Vector3, dt: number) {
  * @param V has result!
  */
 export function velocity(
-  V: THREE.Vector3,
-  F: THREE.Vector3,
+  V: Vector3,
+  F: Vector3,
   m: number,
-  _V: THREE.Vector3,
-  A: THREE.Vector3,
+  _V: Vector3,
+  A: Vector3,
   dt: number
 ) {
   V.copy(_V)
@@ -51,12 +51,7 @@ export function velocity(
  *
  * @param X has result!
  */
-export function position(
-  X: THREE.Vector3,
-  V: THREE.Vector3,
-  _X: THREE.Vector3,
-  dt: number
-) {
+export function position(X: Vector3, V: Vector3, _X: Vector3, dt: number) {
   X.copy(_X).add(rungeKutta(V, dt))
 }
 
@@ -68,11 +63,11 @@ export function position(
  * @param F has result!
  */
 export function springForce(
-  F: THREE.Vector3,
-  X1: THREE.Vector3,
-  X2: THREE.Vector3,
-  V1: THREE.Vector3,
-  V2: THREE.Vector3,
+  F: Vector3,
+  X1: Vector3,
+  X2: Vector3,
+  V1: Vector3,
+  V2: Vector3,
   K: number,
   L: number,
   B: number

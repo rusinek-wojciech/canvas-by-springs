@@ -1,13 +1,14 @@
-import * as THREE from 'three'
+import { BoxGeometry, Vector3, Scene } from 'three'
+
 import { ballCollideCube } from '../../math/collisions'
 import { Ball } from '../canvas/ball.class'
 import { Figure } from './figure.abstract.class'
 import { config } from '../../config'
 
-export class Cube extends Figure<THREE.BoxGeometry> {
-  constructor(scene: THREE.Scene, position: THREE.Vector3) {
+export class Cube extends Figure<BoxGeometry> {
+  constructor(scene: Scene, position: Vector3) {
     const { width, height, depth } = config.figure
-    const geometry = new THREE.BoxGeometry(width, height, depth)
+    const geometry = new BoxGeometry(width, height, depth)
     super(scene, geometry, position)
   }
 

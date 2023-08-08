@@ -1,4 +1,11 @@
-import * as THREE from 'three'
+import {
+  MeshPhysicalMaterial,
+  DoubleSide,
+  Mesh,
+  PlaneGeometry,
+  Scene,
+} from 'three'
+
 import { Ball } from '../figures'
 
 class Plane {
@@ -9,11 +16,11 @@ class Plane {
   readonly ball3
   readonly ball4
 
-  private static readonly material = new THREE.MeshPhysicalMaterial({
+  private static readonly material = new MeshPhysicalMaterial({
     roughness: 0.4,
     thickness: 0.4,
     color: 0xb7a99b,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
   })
 
   constructor(ball1: Ball, ball2: Ball, ball3: Ball, ball4: Ball) {
@@ -22,8 +29,8 @@ class Plane {
     this.ball3 = ball3
     this.ball4 = ball4
 
-    this.mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry().setFromPoints([
+    this.mesh = new Mesh(
+      new PlaneGeometry().setFromPoints([
         ball1._X,
         ball2._X,
         ball3._X,
@@ -37,7 +44,7 @@ class Plane {
 export class Surface {
   readonly planes: Plane[] = []
 
-  constructor(scene: THREE.Scene, balls: Ball[][]) {
+  constructor(scene: Scene, balls: Ball[][]) {
     for (let i = 1; i < balls.length; i++) {
       for (let j = 1; j < balls.length; j++) {
         const plane = new Plane(

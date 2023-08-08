@@ -1,11 +1,11 @@
-import * as THREE from 'three'
+import { Vector3 } from 'three'
 import { Cone, Ball, Sphere, Cube } from '../scene/figures'
 
-const tmp_1 = new THREE.Vector3()
-const tmp_2 = new THREE.Vector3()
-const tmp_3 = new THREE.Vector3()
-const tmp_4 = new THREE.Vector3()
-const tmp_5 = new THREE.Vector3()
+const tmp_1 = new Vector3()
+const tmp_2 = new Vector3()
+const tmp_3 = new Vector3()
+const tmp_4 = new Vector3()
+const tmp_5 = new Vector3()
 
 /**
  * @returns true if collision

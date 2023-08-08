@@ -1,17 +1,24 @@
-import * as THREE from 'three'
+import {
+  BufferGeometry,
+  MeshLambertMaterial,
+  Vector3,
+  Mesh,
+  Scene,
+} from 'three'
+
 import { Ball } from '../canvas/ball.class'
 import { config } from '../../config'
 
-export abstract class Figure<T extends THREE.BufferGeometry> {
-  readonly mesh: THREE.Mesh<T, THREE.MeshLambertMaterial>
-  readonly X: THREE.Vector3
+export abstract class Figure<T extends BufferGeometry> {
+  readonly mesh: Mesh<T, MeshLambertMaterial>
+  readonly X: Vector3
 
-  private static readonly material = new THREE.MeshLambertMaterial({
+  private static readonly material = new MeshLambertMaterial({
     color: 'teal',
   })
 
-  constructor(scene: THREE.Scene, geometry: T, position: THREE.Vector3) {
-    this.mesh = new THREE.Mesh(geometry, Figure.material)
+  constructor(scene: Scene, geometry: T, position: Vector3) {
+    this.mesh = new Mesh(geometry, Figure.material)
 
     this.X = this.mesh.position
     this.X.copy(position)

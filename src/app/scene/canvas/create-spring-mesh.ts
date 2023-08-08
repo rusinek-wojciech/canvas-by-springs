@@ -1,3 +1,5 @@
+import { Scene } from 'three'
+
 import { Ball } from '../figures'
 import { Spring } from './spring.class'
 
@@ -7,7 +9,7 @@ export const createSpringMesh = {
   merged: createMergedMesh,
 }
 
-function createSquareMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
+function createSquareMesh(scene: Scene, balls: Ball[][], rows: number) {
   const springs: Spring[] = []
 
   for (let i = 0; i < rows; i++) {
@@ -26,7 +28,7 @@ function createSquareMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
   return springs
 }
 
-function createDiagonalMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
+function createDiagonalMesh(scene: Scene, balls: Ball[][], rows: number) {
   const springs: Spring[] = []
 
   for (let i = 1; i < rows; i++) {
@@ -45,7 +47,7 @@ function createDiagonalMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
   return springs
 }
 
-function createMergedMesh(scene: THREE.Scene, balls: Ball[][], rows: number) {
+function createMergedMesh(scene: Scene, balls: Ball[][], rows: number) {
   return [
     ...createSquareMesh(scene, balls, rows),
     ...createDiagonalMesh(scene, balls, rows),

@@ -1,4 +1,5 @@
-import * as THREE from 'three'
+import { Vector3, Mesh, SphereGeometry, MeshStandardMaterial } from 'three'
+
 import { config } from '../../config'
 import { position, velocity } from '../../math/formulas'
 import { ballCollideBall } from '../../math/collisions'
@@ -7,17 +8,17 @@ export class Ball {
   readonly mesh
   readonly m: number
 
-  readonly X: THREE.Vector3
-  readonly _X = new THREE.Vector3()
-  readonly _V = new THREE.Vector3()
-  readonly V = new THREE.Vector3()
-  readonly _F = new THREE.Vector3()
-  readonly F = new THREE.Vector3()
+  readonly X: Vector3
+  readonly _X = new Vector3()
+  readonly _V = new Vector3()
+  readonly V = new Vector3()
+  readonly _F = new Vector3()
+  readonly F = new Vector3()
 
-  constructor(position: THREE.Vector3, color: string, mass: number) {
-    this.mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(config.canvas.ball.radius, 8, 4),
-      new THREE.MeshStandardMaterial({
+  constructor(position: Vector3, color: string, mass: number) {
+    this.mesh = new Mesh(
+      new SphereGeometry(config.canvas.ball.radius, 8, 4),
+      new MeshStandardMaterial({
         color,
       })
     )

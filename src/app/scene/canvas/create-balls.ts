@@ -1,4 +1,5 @@
-import * as THREE from 'three'
+import { Vector3 } from 'three'
+
 import { config } from '../../config'
 import { Ball } from '../figures'
 import { rotation } from '../../math/rotations'
@@ -28,7 +29,7 @@ export function createBalls() {
     while (j < perRow) {
       row.push(
         new Ball(
-          new THREE.Vector3(dj - 0.5 * length, 0, di - 0.5 * length)
+          new Vector3(dj - 0.5 * length, 0, di - 0.5 * length)
             .applyMatrix3(rot)
             .add(position),
           colorByIterators(dj, di, length),
