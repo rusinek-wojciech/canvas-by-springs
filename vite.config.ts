@@ -1,5 +1,12 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
-export default defineConfig({
-  base: '/canvas-by-springs/',
+type Env = {
+  PUBLISH_URI: string
+}
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '') as Env
+  return {
+    base: `/${env.PUBLISH_URI}/`,
+  }
 })
