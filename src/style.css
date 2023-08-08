@@ -27,6 +27,10 @@ h1 {
   text-align: center;
 }
 
+.dg {
+  font-size: 12px !important;
+}
+
 .dg.a {
   margin-right: 0 !important;
 }
