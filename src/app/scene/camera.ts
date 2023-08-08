@@ -24,7 +24,7 @@ export function createCamera(renderer: WebGLRenderer) {
       camera.updateProjectionMatrix()
       renderer.setSize(window.innerWidth, window.innerHeight)
     },
-    { once: true }
+    { once: true, passive: true }
   )
 
   return camera

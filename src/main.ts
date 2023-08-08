@@ -15,5 +15,5 @@ window.addEventListener(
   () => {
     WebGL.isWebGLAvailable() ? loadApp() : handleWebGLNotAvailable()
   },
-  { once: true }
+  { once: true, passive: true }
 )
