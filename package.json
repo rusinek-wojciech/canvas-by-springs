@@ -5,8 +5,9 @@
   "type": "module",
   "homepage": "https://rusinek-wojciech.github.io/canvas-by-springs",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "tsc && vite build",
+    "optimize": "vite optimize",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -16,7 +17,6 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.5",
     "vite-plugin-css-injected-by-js": "^3.3.0"
-
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
